@@ -7,14 +7,14 @@ import Calendar from "./components/Calendar/Component"
 function App() {
 
     const weekDays:any = {
-
+        0:"ВС",
         1:"ПН",
         2:"ВТ",
         3:"СР",
         4:"ЧТ",
         5:"ПТ",
         6:"СБ",
-        0:"ВС",
+
     }
     const today = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth())
@@ -45,7 +45,32 @@ function App() {
 
     const lastDayOfPrevMonth = new Date(currentYear, currentMonth, 0).getDay(); //трицательные значения берут прошлый месяц
     const firstDayOfThisMonth = new Date(currentYear, currentMonth, 1).getDay(); //трицательные значения берут прошлый месяц
-    const firstDayOfNextMonth = new Date(currentYear, currentMonth+1, 1).getDay();
+    const lastDayOfThisMonth = new Date(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth)).getDay(); //трицательные значения берут прошлый месяц
+    const firstDayOfNextMonth = new Date(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth) + 1).getDay();
+
+    console.log('lastDayOfPrevMonth = ', lastDayOfPrevMonth)
+    console.log('firstDayOfThisMonth = ', firstDayOfThisMonth)
+    //console.log('firstDayOfNextMonth = ', firstDayOfNextMonth)
+
+    const render = () => {
+
+        let daysInMonth = getDaysInMonth(currentYear, currentMonth);
+
+        let obj = [];
+        for(let i = 1;i <= daysInMonth;i++ ){
+            obj.push({
+                dayOfWeek:new Date(currentYear, currentMonth, i).getDay(),
+                day:i
+            })
+        }
+
+        return obj;
+    }
+
+
+    console.log('render = ',render())
+
+    //если текущий  первый день это среда
 
     const nextMonth = () => {
         if(currentMonth + 1 > 11){
@@ -84,7 +109,7 @@ function App() {
         console.log(firstDayOfNextMonth + '-------------------')
         let getLastDays:any = [];
         //если первый день недели это пн (1) , то нам не нужны следующие дни
-        if(firstDayOfNextMonth > 1 || firstDayOfNextMonth === 0 ){
+        if(firstDayOfNextMonth === 1 ){
             for(let i = 1;i<=firstDayOfNextMonth;i++){
                 getLastDays.push(weekDays[i])
             }
@@ -95,13 +120,12 @@ function App() {
 
     console.log(getLastDays(lastDayOfPrevMonth))
     console.log(getNextDays(firstDayOfNextMonth))
-    ;
+
 
     return (
     <div>
         Первый день месяца - {weekDays[firstDayOfNextMonth]}<br/>
         Количество дней в месяце - {getDaysInMonth(currentYear,currentMonth)}<br/>
-        {/*{currentDay} {month[currentMonth]} {currentYear}*/}
         {currentDay}/ {month[currentMonth]}/ {currentYear}
 
         <br/>Количество дней в месяце
@@ -113,7 +137,20 @@ function App() {
         <button onClick={nextMonth}>Next</button>
 
         {lastDayOfPrevMonth}
-
+        <div className="container">
+            <div className="day">ПН</div>
+            <div className="day">ВТ</div>
+            <div className="day">СР</div>
+            <div className="day">ЧТ</div>
+            <div className="day">ПТ</div>
+            <div className="day">СБ</div>
+            <div className="day">ВС</div>
+            {render().map((day,idx) => {
+                return (
+                    <div className="day" key={idx}>{day.day}</div>
+                )
+            })}
+        </div>
 
 
     </div>
