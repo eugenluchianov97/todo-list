@@ -7,13 +7,14 @@ import Calendar from "./components/Calendar/Component"
 function App() {
 
     const weekDays:any = {
-        0:"ВС",
+
         1:"ПН",
         2:"ВТ",
         3:"СР",
         4:"ЧТ",
         5:"ПТ",
         6:"СБ",
+        7:"ВС",
 
     }
     const today = new Date();
@@ -48,27 +49,7 @@ function App() {
     const lastDayOfThisMonth = new Date(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth)).getDay(); //трицательные значения берут прошлый месяц
     const firstDayOfNextMonth = new Date(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth) + 1).getDay();
 
-    console.log('lastDayOfPrevMonth = ', lastDayOfPrevMonth)
-    console.log('firstDayOfThisMonth = ', firstDayOfThisMonth)
-    //console.log('firstDayOfNextMonth = ', firstDayOfNextMonth)
 
-    const render = () => {
-
-        let daysInMonth = getDaysInMonth(currentYear, currentMonth);
-
-        let obj = [];
-        for(let i = 1;i <= daysInMonth;i++ ){
-            obj.push({
-                dayOfWeek:new Date(currentYear, currentMonth, i).getDay(),
-                day:i
-            })
-        }
-
-        return obj;
-    }
-
-
-    console.log('render = ',render())
 
     //если текущий  первый день это среда
 
@@ -106,7 +87,7 @@ function App() {
     }
 
     const getNextDays = (firstDayOfNextMonth:number) => {
-        console.log(firstDayOfNextMonth + '-------------------')
+
         let getLastDays:any = [];
         //если первый день недели это пн (1) , то нам не нужны следующие дни
         if(firstDayOfNextMonth === 1 ){
@@ -122,9 +103,65 @@ function App() {
     console.log(getNextDays(firstDayOfNextMonth))
 
 
+
+
+
+    const test = () => {
+        return (
+            <div>
+                { Object.entries(weekDays).map((day:any) => {
+                    console.log(day[0])
+                    return (
+                        <div>{day[1]}</div>
+                    )
+                })}
+            </div>
+        )
+    }
+
+    const dayOfWeek = (day:number) => {
+        return (day === 0) ? 7 : day
+    }
+
+    const render = () => {
+        let days = [];
+       let lastDayLastMonth = dayOfWeek(new Date(currentYear, currentMonth, 0).getDay());
+       if(lastDayLastMonth != 7){
+           for(let i = lastDayLastMonth;i > 0;i--){
+               let date = new Date(currentYear, currentMonth, 1 - i ).getDate()
+               let day = new Date(currentYear, currentMonth, 1 - i ).getDay()
+               days.push({date:date,day:dayOfWeek(day),active:false})
+           }
+       }
+
+        for(let i = 1;i <= getDaysInMonth(currentYear,currentMonth);i++){
+
+            let day = new Date(currentYear, currentMonth, i).getDay()
+            days.push({date:i,day:dayOfWeek(day),active:true})
+        }
+
+        let daysCount = getDaysInMonth(currentYear,currentMonth)
+        let firstDayNextMonth = dayOfWeek(new Date(currentYear, currentMonth, daysCount + 1).getDay());
+
+        console.log(firstDayNextMonth)
+        if(firstDayNextMonth != 1){
+            //цикл с первого дня до вс
+            for(let i = firstDayNextMonth, d = 1;i <= 7;i++,d++){
+                let date = new Date(currentYear, currentMonth, daysCount + d ).getDate()
+                let day = new Date(currentYear, currentMonth, daysCount + d ).getDay()
+                days.push({date:date,day:dayOfWeek(day),active:false})
+            }
+        }
+
+        console.log(days)
+    }
+    render()
+
+
+
     return (
     <div>
-        Первый день месяца - {weekDays[firstDayOfNextMonth]}<br/>
+        Первый день месяца - - {firstDayOfThisMonth}<br/>
         Количество дней в месяце - {getDaysInMonth(currentYear,currentMonth)}<br/>
         {currentDay}/ {month[currentMonth]}/ {currentYear}
 
@@ -145,12 +182,11 @@ function App() {
             <div className="day">ПТ</div>
             <div className="day">СБ</div>
             <div className="day">ВС</div>
-            {render().map((day,idx) => {
-                return (
-                    <div className="day" key={idx}>{day.day}</div>
-                )
-            })}
         </div>
+
+        {
+            test()
+        }
 
 
     </div>
