@@ -28,14 +28,27 @@
     width:50px;
 }
 
-.day.disabled {
-    opacity:0.5;
-    background: #eee;
-    cursor: initial;
 
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
 }
 
-.day.active {
-    background: red;
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 

@@ -4,7 +4,7 @@ import React, {FC} from "react";
 interface ModalProps {
     closeModal: () => void,
     modal:boolean,
-    component:any
+    component:React.ReactNode
 
 }
 export default (props:ModalProps) => {
@@ -20,11 +20,10 @@ export default (props:ModalProps) => {
     let className = "absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center " + (props.modal ? "block ease-out duration-300" : "hidden ease-out duration-300");
     return (
         <div onClick={closeModal} className={className}>
-            <div className="w-4/12 bg-white p-4 shadow-xl relative">
-                {
-                    props.component
-                }
-            </div>
+            {
+                props.component
+            }
+
         </div>
     )
 }

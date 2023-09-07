@@ -9,7 +9,8 @@ import _weekDaysFull from "./../../dictionares/weekDaysFull"
 import _month from "./../../dictionares/month"
 interface CalendarProps {
     modal: boolean,
-    openModal:(element: JSX.Element) => void
+    openModal:(element: JSX.Element) => void,
+    closeModal:() => void
 
 }
 export default (props:CalendarProps) => {
@@ -92,7 +93,6 @@ export default (props:CalendarProps) => {
             }
         }
 
-        console.log(days)
         return days;
     }
 
@@ -116,13 +116,17 @@ export default (props:CalendarProps) => {
         }
     }
 
+    const closeModal = () => {
+        props.closeModal()
+    }
+
 
     const openDay = (day:any):void => {
-        props.openModal(<DayItem day={day}/>)
+        props.openModal(<DayItem day={day} closeModal={closeModal} />)
     }
 
     const addItem = ():void => {
-        props.openModal(<AddItem />)
+        props.openModal(<AddItem closeModal={closeModal}/>)
     }
 
     let className = "container flex bg-teal-300 m-auto  " + (props.modal ? "blur-sm" : "")
