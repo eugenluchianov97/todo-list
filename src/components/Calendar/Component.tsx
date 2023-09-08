@@ -1,12 +1,12 @@
 import "./style.css"
 import React, {FC, useState} from "react";
 
-import AddItem from "./../AddItem/Component"
 import DayItem from "./../DayItem/Component"
 
 import _weekDays from "./../../dictionares/weeksDays"
 import _weekDaysFull from "./../../dictionares/weekDaysFull"
 import _month from "./../../dictionares/month"
+import {getFromJSON} from "../../helper";
 interface CalendarProps {
     modal: boolean,
     openModal:(element: JSX.Element) => void,
@@ -18,6 +18,8 @@ export default (props:CalendarProps) => {
     const weekDays :any = _weekDays;
     const weekDaysFull:any = _weekDaysFull;
     const month:any = _month;
+
+    const data = getFromJSON('ITEMS')
 
 
     const today:Date = new Date();
@@ -40,6 +42,8 @@ export default (props:CalendarProps) => {
             for(let i = lastDayLastMonth;i > 0;i--){
                 let date:number = new Date(currentYear, currentMonth, 1 - i ).getDate()
                 let day:number = new Date(currentYear, currentMonth, 1 - i ).getDay()
+
+
                 days.push({
                     date:date,
                     day:dayOfWeek(day),
@@ -57,7 +61,7 @@ export default (props:CalendarProps) => {
         for(let i:number = 1;i <= getDaysInMonth(currentYear,currentMonth);i++){
 
             let day:number = new Date(currentYear, currentMonth, i).getDay()
-            //если год меньше
+
             days.push({
                 date:i,
                 day:dayOfWeek(day),
@@ -93,6 +97,8 @@ export default (props:CalendarProps) => {
             }
         }
 
+
+
         return days;
     }
 
@@ -125,9 +131,6 @@ export default (props:CalendarProps) => {
         props.openModal(<DayItem day={day} closeModal={closeModal} />)
     }
 
-    const addItem = ():void => {
-        props.openModal(<AddItem closeModal={closeModal}/>)
-    }
 
     let className = "container flex bg-teal-300 m-auto  " + (props.modal ? "blur-sm" : "")
 
@@ -165,30 +168,46 @@ export default (props:CalendarProps) => {
 
                     {
                         renderList().map((day, idx) => {
-                            let disabledClass = 'text-slate-400 ';
-                            let todayClass = 'border-4 font-semibold rounded-full border-pink-600 bg-pink-200 text-pink-600  ';
-                            let pastClass = "border-4  rounded-full border-slate-100  bg-slate-100 ";
+                            let disabledClass = 'opacity-50 text-pink-600 ';
+                            let todayClass = ' text-pink-600 border-pink-600  bg-pink-200  font-semibold   ';
+                            let pastClass = "  text-slate-700 border-slate-700  bg-slate-200 ";
+
+                            let count = 0;
+                            data.filter((el:any) => {
+                                if(el.day === day.date && el.month === day.month && el.year === day.year ){
+
+                                    count++
+                                }
+
+                            })
+
+                            let className:string = "day m-1 flex items-center justify-center cursor-pointer font-medium relative rounded-full border border-";
 
 
-                            let className:string = "day m-1  flex items-center justify-center cursor-pointer font-medium ";
-                            if(!day.active){
-                                className += disabledClass
-                            }
                             if(day.past){
-                                className += pastClass
+                                className +=  pastClass;
+                            }
+                            else if(!day.active){
+                                className += disabledClass;
+                            }
+                            else if(day.today){
+                                className += todayClass;
                             }
 
-
-                            className = className + (day.today  ? todayClass : '' )
                             return (
 
-                                <div key={idx} onClick={() => {openDay(day)}} className={className}>{day.date}</div>
+                                <div key={idx} onClick={() => {openDay(day)}} className={className}>
+                                    {day.date}
+                                    {count > 0 && (
+                                        <div className="absolute w-4 h-4 -top-1 -right-1 bg-yellow-400 rounded-full text-xs flex items-center justify-center ">
+                                            {count}
+                                        </div>
+                                    )}
+
+                                </div>
                             )
                         })
                     }
-                </div>
-                <div onClick={addItem} className="w-16 h-16 bg-teal-300 rounded-full -mb-8 -mr-8 flex items-center justify-center absolute bottom-0 right-0">
-                    <i className="fa fa-plus text-white text-2xl cursor-pointer"></i>
                 </div>
             </div>
 

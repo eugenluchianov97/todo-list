@@ -9,14 +9,14 @@ interface dataObj {
     done:boolean;
 }
 export const setItem = (data:dataObj) => {
-    let arr = getFromJSON('ITEMS');
-    arr.push(data)
-    setToJSON('ITEMS', JSON.stringify(arr))
+    let items = getFromJSON('ITEMS');
+    items.push(data);
+    setToJSON('ITEMS', items)
 }
 
-export const getFromJSON = (key:string) :any[] => {
+export const getFromJSON = (key:string) :any => {
     let json:string|null = localStorage.getItem(key);
-    return json === null ?  [] : JSON.parse(JSON.parse(json))
+    return json === null ?  [] : JSON.parse(json)
 }
 
 export const setToJSON = (key:string,arr:any):void => {
