@@ -35,6 +35,14 @@ export default (props:CalendarProps) => {
         return (day === 0) ? 7 : day
     }
 
+    const dateInPast = function(selectedDate:Date) {
+        let now = new Date();
+        now.setHours(0,0,0,0);
+        return selectedDate < now;
+
+
+    };
+
     const renderList = () => {
         let days:any[] = [];
         let lastDayLastMonth:any = dayOfWeek(new Date(currentYear, currentMonth, 0).getDay());
@@ -51,9 +59,7 @@ export default (props:CalendarProps) => {
                     year:currentYear,
                     month:currentMonth-1,
                     today:false,
-                    past:currentYear < today.getFullYear() ||
-                        (currentYear === today.getFullYear() && currentMonth < today.getMonth() ) ||
-                        (currentYear === today.getFullYear() && currentMonth === today.getMonth() &&  i < today.getDate())
+                    past:dateInPast(new Date( currentYear,currentMonth-1,date))
                 })
             }
         }
@@ -69,9 +75,7 @@ export default (props:CalendarProps) => {
                 year:currentYear,
                 month:currentMonth,
                 today:i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear(),
-                past:currentYear < today.getFullYear() ||
-                    (currentYear === today.getFullYear() && currentMonth < today.getMonth() ) ||
-                    (currentYear === today.getFullYear() && currentMonth === today.getMonth() &&  i < today.getDate())
+                past:dateInPast(new Date( currentYear,currentMonth,i))
             })
         }
 
@@ -83,6 +87,7 @@ export default (props:CalendarProps) => {
             for(let i:number = firstDayNextMonth, d:number = 1;i <= 7;i++,d++){
                 let date:number = new Date(currentYear, currentMonth, daysCount + d ).getDate()
                 let day:number = new Date(currentYear, currentMonth, daysCount + d ).getDay()
+
                 days.push({
                     date:date,
                     day:dayOfWeek(day),
@@ -90,9 +95,7 @@ export default (props:CalendarProps) => {
                     month:currentMonth+1,
                     year:currentYear,
                     today:false,
-                    past:currentYear < today.getFullYear() ||
-                        (currentYear === today.getFullYear() && currentMonth < today.getMonth() ) ||
-                        (currentYear === today.getFullYear() && currentMonth === today.getMonth() &&  i < today.getDate())
+                    past:dateInPast(new Date( currentYear,currentMonth+1,date))
                 })
             }
         }
@@ -128,22 +131,30 @@ export default (props:CalendarProps) => {
 
 
     const openDay = (day:any):void => {
-        props.openModal(<DayItem day={day} closeModal={closeModal} />)
+        //только если день в будующем или сегодня
+        if(!dateInPast(new Date( day.year,day.month,day.date))){
+            props.openModal(<DayItem day={day} closeModal={closeModal} />)
+        }
+        else{
+            alert("Нельзя вешать задания на прошлое!")
+        }
+
+
     }
 
 
-    let className = "container flex bg-teal-300 m-auto  " + (props.modal ? "blur-sm" : "")
+    let className = "container w-3/4 flex flex-col sm:flex-row bg-teal-300 m-auto  " + (props.modal ? "blur-sm" : "")
 
     return (
 
         <div className={className}>
 
-            <div className="flex flex-col items-center justify-center w-4/12 bg-teal-300 ">
+            <div className="flex flex-col items-center justify-center w-full sm:w-4/12 bg-teal-300 ">
 
-                <h1 className="uppercase font-light text-white m-6 select-none">{weekDaysFull[today.getDay()]}</h1>
-                <p className="font-light text-9xl text-white mb-8 select-none">{currentDay}</p>
+                <h1 className="uppercase font-light text-white m-3 sm:m-6 select-none">{weekDaysFull[dayOfWeek(today.getDay())]}</h1>
+                <p className="font-light text-8xl sm:text-9xl text-white mb-4 sm:mb-8 select-none">{currentDay}</p>
             </div>
-            <div className="w-8/12 bg-white relative">
+            <div className=" w-full sm:w-8/12 bg-white relative">
 
                 <div className="prev-next-container flex justify-around items-center p-8">
                     <button onClick={prevMonth}>
@@ -155,7 +166,7 @@ export default (props:CalendarProps) => {
                     </button>
                 </div>
 
-                <div className="days-container">
+                <div className="days-container mx-auto">
                     {Object.entries(weekDays).map((day:any, idx) => {
                         return (
                             <div key={idx} className="day-heading select-none font-semibold text-pink-600 flex items-center justify-center m-1">{day[1]}</div>
@@ -164,34 +175,42 @@ export default (props:CalendarProps) => {
                 </div>
 
 
-                <div className="days-container pb-8">
+                <div className="days-container mx-auto pb-8">
 
                     {
                         renderList().map((day, idx) => {
-                            let disabledClass = 'opacity-50 text-pink-600 ';
-                            let todayClass = ' text-pink-600 border-pink-600  bg-pink-200  font-semibold   ';
-                            let pastClass = "  text-slate-700 border-slate-700  bg-slate-200 ";
+
 
                             let count = 0;
                             data.filter((el:any) => {
-                                if(el.day === day.date && el.month === day.month && el.year === day.year ){
+                                if(el.day === day.date && el.month === day.month && el.year === day.year && !el.done ){
 
                                     count++
                                 }
 
                             })
 
-                            let className:string = "day m-1 flex items-center justify-center cursor-pointer font-medium relative rounded-full border border-";
 
+                            let dayClass:string = "day m-1 flex items-center justify-center cursor-pointer font-medium relative rounded-full border ";
+                            let disabledClass = 'opacity-50 text-slate-600 ';
+                            let todayClass = ' text-pink-600 border-pink-600  bg-pink-200  font-semibold   ';
+                            let pastClass = "opacity-1 text-slate-700 border-slate-700  bg-slate-200 line-through ";
 
-                            if(day.past){
-                                className +=  pastClass;
+                            if(!day.active && day.past){
+                                className = dayClass+pastClass+disabledClass;
+                            }
+                            else if(day.past){
+                                className =  dayClass+pastClass;
                             }
                             else if(!day.active){
-                                className += disabledClass;
+                                className = dayClass+disabledClass;
                             }
+
                             else if(day.today){
-                                className += todayClass;
+                                className = dayClass+todayClass;
+                            }
+                            else {
+                                className = dayClass
                             }
 
                             return (

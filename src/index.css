@@ -11,7 +11,7 @@
 
 
 .container {
-    width:650px
+    width:650px;
 }
 .days-container {
     display: flex;
@@ -21,11 +21,26 @@
 .day {
     width:50px;
     height:50px;
-
 }
 
 .day-heading {
     width:50px;
+}
+
+@media only screen and (max-width: 400px)  {
+    .days-container {
+        display: flex;
+        flex-wrap:wrap;
+        width:306px
+    }
+    .day {
+        width:35px;
+        height:35px;
+    }
+
+    .day-heading {
+        width:35px;
+    }
 }
 
 

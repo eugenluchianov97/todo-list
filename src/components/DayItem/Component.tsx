@@ -78,8 +78,23 @@ export default  (props:DaiItemProps) => {
 
     }
 
+    const successItem = (id:number) => {
+        const result:any = getFromJSON('ITEMS').filter((obj:any) => {
+            if(obj.id === id){
+                obj.done = true;
+            }
+            return obj;
+        });
+
+
+        setToJSON('ITEMS',result)
+
+        setItems(getItems());
+
+    }
+
     const deleteItem = (id:number) => {
-        console.log('here')
+
         const result:any = getFromJSON('ITEMS').filter((obj:any,idx:number) => {
             if(obj.id !== id){
                 return obj;
@@ -128,16 +143,16 @@ export default  (props:DaiItemProps) => {
 
     return (
         <>
-            <div className="w-4/6 bg-white p-4 shadow-xl relative">
-                <div onClick={closeModal} className="cursor-pointer w-16 h-16 bg-teal-300 rounded-full -mt-12  flex items-center justify-center absolute -right-8">
+            <div className="w-4/5 sm:w-4/6 bg-white p-1 sm:p-4 shadow-xl relative">
+                <div onClick={closeModal} className="cursor-pointer w-8 sm:w-16 h-8 sm:h-16 bg-teal-300 rounded-full -mt-5 sm:-mt-12  flex items-center justify-center absolute -right-4 sm:-right-8">
                     <i className="fa fa-close text-white text-2xl "></i>
                 </div>
-                <div className="flex justify-between items-center ">
+                <div className="flex flex-col sm:flex-row justify-between items-center ">
                     <div className="flex items-center">
-                        <div className="text-7xl text-slate-700 font-semibold">{props.day.date}</div>
-                        <div className="ml-1">
-                            <div className="text-2xl font-medium text-slate-700">{month[props.day.month]}</div>
-                            <div className="text-xl font-medium -mt-1 text-slate-700">{props.day.year}</div>
+                        <div className=" text-lg sm:text-7xl text-slate-700 font-semibold">{props.day.date}</div>
+                        <div className="ml-1 flex sm:flex-col">
+                            <div className="text-lg sm:text-2xl font-medium text-slate-700">{month[props.day.month]}</div>
+                            <div className="text-lg sm:text-xl font-medium sm:-mt-1 text-slate-700">{props.day.year}</div>
                         </div>
                     </div>
 
@@ -148,10 +163,11 @@ export default  (props:DaiItemProps) => {
 
 
 
-                <div className="my-16 h-full overflow-y-auto h-96 mx-4" >
+                <div className=" my-2 sm:my-16 h-full overflow-y-auto h-80 sm:h-96 mx-1 sm:mx-4" >
                     { items.length > 0 && items.map((item:any, idx:number) => {
+                        let className = "border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-green-300':'');
                         return (
-                            <div key={idx} className="border border-slate-300 rounded p-3 my-1 select-none flex items-center justify-between" >
+                            <div key={idx} className={className} >
                                <div className="flex items-center w-full">
                                    <div className="text-xl font-medium mx-1">
                                        {++idx}.
@@ -182,7 +198,7 @@ export default  (props:DaiItemProps) => {
                                        </div>
                                    </div>
                                </div>
-                                <div className="flex items-between justify-center">
+                                <div className="flex flex-col sm:flex-row items-between justify-center ">
                                     {editedId !== item.id && (
                                         <>
                                             <div onClick={() => {deleteItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
@@ -190,6 +206,9 @@ export default  (props:DaiItemProps) => {
                                             </div>
                                             <div onClick={() => {editItem(item)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
                                                 <i className="fa fa-pencil text-blue-500"></i>
+                                            </div>
+                                            <div onClick={() => {successItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
+                                                <i className="fa fa-star text-yellow-500"></i>
                                             </div>
                                         </>
                                     )}
@@ -209,7 +228,7 @@ export default  (props:DaiItemProps) => {
                     })
                     }
                     {newItem && (
-                        <div className="border border-slate-300 rounded p-3 my-1 select-none flex items-center justify-between" >
+                        <div className="border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-between" >
                             <div className="flex items-center w-full">
 
                                 <div className="mx-2 w-full">
@@ -236,7 +255,7 @@ export default  (props:DaiItemProps) => {
 
                     {
                         items.length === 0 && (
-                            <div className="border border-slate-300 rounded p-3 my-1 select-none flex items-center justify-center" >
+                            <div className="border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-center" >
                                 <p>Нет записей</p>
                             </div>
                         )
@@ -244,7 +263,7 @@ export default  (props:DaiItemProps) => {
                 </div>
 
 
-                <div onClick={addItem } className="cursor-pointer w-16 h-16 bg-teal-300 rounded-full -mb-12 mx-auto flex items-center justify-center">
+                <div onClick={addItem } className="cursor-pointer w-8 sm:w-16 h-8 sm:h-16 bg-teal-300 rounded-full -mb-5 sm:-mb-12 mx-auto flex items-center justify-center">
                     <i className="fa fa-plus text-white text-2xl "></i>
                 </div>
             </div>
