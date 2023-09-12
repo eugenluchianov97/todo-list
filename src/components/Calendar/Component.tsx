@@ -1,5 +1,5 @@
 import "./style.css"
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 
 import DayItem from "./../DayItem/Component"
 
@@ -7,6 +7,8 @@ import _weekDays from "./../../dictionares/weeksDays"
 import _weekDaysFull from "./../../dictionares/weekDaysFull"
 import _month from "./../../dictionares/month"
 import {getFromJSON} from "../../helper";
+
+import axios from 'axios'
 interface CalendarProps {
     modal: boolean,
     openModal:(element: JSX.Element) => void,
@@ -14,6 +16,9 @@ interface CalendarProps {
 
 }
 export default (props:CalendarProps) => {
+
+
+
 
     const weekDays :any = _weekDays;
     const weekDaysFull:any = _weekDaysFull;
@@ -183,7 +188,7 @@ export default (props:CalendarProps) => {
 
                             let count = 0;
                             data.filter((el:any) => {
-                                if(el.day === day.date && el.month === day.month && el.year === day.year && !el.done ){
+                                if(el.day === day.date && el.month === day.month && el.year === day.year && !el.done && !day.past ){
 
                                     count++
                                 }
