@@ -1,9 +1,14 @@
 import React, {useState} from "react";
-import {login} from "../../api";
+import {register} from "../../api";
 
+import Login from "./../Login/Component"
 
-export default () => {
-    const [email, setEmail] = useState('eugenluchianov97@gmail.com');
+interface RegisterProps {
+    openModal:(element: JSX.Element) => void,
+}
+
+export default (props:RegisterProps) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [emailEr, setEmailEr] = useState([]);
@@ -13,51 +18,47 @@ export default () => {
     const [loading, setLoading] = useState(false);
 
     const Register = () => {
-        // setLoading(true)
+        setLoading(true)
         //
-        // const data = {
-        //     email:email,
-        //     password:password
-        // }
-        // login(data).then((res:any) => {
-        //
-        //     if(res.status === 200){
-        //         localStorage.setItem('token',res.data.token);
-        //     }
-        //     setLoading(false)
-        //
-        // }).catch(err => {
-        //     if(err.response.status === 422){
-        //         Object.entries(err.response.data.errors).map((er :any) => {
-        //             if(er[0] === 'email') {
-        //                 setEmailEr(er[1])
-        //             }
-        //
-        //             if(er[0] === 'password') {
-        //                 setPasswordEr(er[1])
-        //             }
-        //
-        //         })
-        //
-        //     }
-        //
-        //     if(err.response.status === 401){
-        //         Object.entries(err.response.data.errors).map((er :any) => {
-        //             if(er[0] === 'credentials') {
-        //                 setCredentialsEr(er[1])
-        //             }
-        //
-        //
-        //         })
-        //
-        //     }
-        //
-        //     setLoading(false)
-        // });
+        const data = {
+            email:email,
+            password:password,
+            name:name
+        }
+        register(data).then((res:any) => {
+
+            if(res.status === 200){
+                localStorage.setItem('token',res.data.token);
+            }
+            setLoading(false)
+
+        }).catch(err => {
+            if(err.response.status === 422){
+                Object.entries(err.response.data.errors).map((er :any) => {
+                    if(er[0] === 'name') {
+                        setNameEr(er[1])
+                    }
+                    if(er[0] === 'email') {
+                        setEmailEr(er[1])
+                    }
+                    if(er[0] === 'password') {
+                        setPasswordEr(er[1])
+                    }
+
+                })
+
+            }
+            setLoading(false)
+        });
 
     }
-    const emailClass = "my-1 outline-none border border-slate-300 rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "")
-    const passwordClass = "my-1 outline-none border border-slate-300 rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "")
+
+    const openLogin = () => {
+        props.openModal(<Login openModal={props.openModal}/>)
+    }
+    const emailClass = "my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
+    const passwordClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")
+    const nameClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (nameEr.length > 0 ? "border-red-300" : "border-slate-300")
 
     return (
         <div className="w-4/5 sm:w-1/2  lg:w-1/4 bg-white p-1 sm:p-4 shadow-xl relative">
@@ -78,7 +79,7 @@ export default () => {
             )}
 
             <div className="p-3">
-                <input value={name} onChange={(e) => {setName(e.target.value);setNameEr([]);setCredentialsEr([])}} className={emailClass} type="text" placeholder="Имя"/>
+                <input value={name} onChange={(e) => {setName(e.target.value);setNameEr([]);setCredentialsEr([])}} className={nameClass} type="text" placeholder="Имя"/>
                 {nameEr.length > 0 && (
                     <p className="text-red-300">{nameEr[0]}</p>
                 )}
@@ -99,7 +100,7 @@ export default () => {
                 <button onClick={Register} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Регистрация</button>
             </div>
             <div className="p-3 flex justify-between">
-                <p className="cursor-pointer hover:text-teal-300">Уже имеете аккаунт?</p>
+                <p onClick={openLogin} className="cursor-pointer hover:text-teal-300">Уже имеете аккаунт?</p>
                 <p className="cursor-pointer hover:text-teal-300">Забыли пароль?</p>
             </div>
 

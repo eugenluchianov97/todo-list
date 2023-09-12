@@ -21,6 +21,20 @@ export const login = (data:any) => {
     return csrf_cookie().then((res:any) => {
         return axios.post(host+'/api/auth/login',data, config)
     })
+}
+
+
+export const register = (data:any) => {
+    const config = {
+        headers:{
+            "Accept":"application/json",
+        },
+        withCredentials: true
+    }
+
+    return csrf_cookie().then((res:any) => {
+        return axios.post(host+'/api/auth/register',data, config)
+    })
 
 
 }

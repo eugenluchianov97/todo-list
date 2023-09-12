@@ -29,11 +29,11 @@ function App() {
         else{
             openModal(<Login openModal={openModal}/>);
         }
-        axios.get('http://localhost:8000/api/me', config).then(res => {
-            console.log(res)
-        }).catch(err => {
-            console.log(err)
-        });
+        // axios.get('http://localhost:8000/api/me', config).then(res => {
+        //     console.log(res)
+        // }).catch(err => {
+        //     console.log(err)
+        // });
     },[])
 
 

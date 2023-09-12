@@ -63,10 +63,10 @@ export default (props:LoginProps) => {
     }
 
     const openRegister = () => {
-        props.openModal(<Register/>)
+        props.openModal(<Register openModal={props.openModal}/>)
     }
-    const emailClass = "my-1 outline-none border border-slate-300 rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "")
-    const passwordClass = "my-1 outline-none border border-slate-300 rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "")
+    const emailClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
+    const passwordClass = "my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")
     return (
 
         <>
