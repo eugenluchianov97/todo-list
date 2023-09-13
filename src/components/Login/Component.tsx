@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 
 
 import Register from "./../Register/Component"
@@ -6,10 +6,17 @@ import Register from "./../Register/Component"
 
 import {login} from "../../api"
 
+import UserContext from "../../contexts/UserContext";
+
+
 interface LoginProps {
     openModal:(element: JSX.Element) => void,
+    closeModal:() => void
 }
 export default (props:LoginProps) => {
+
+    const {user, _setUser} = useContext<any>(UserContext);
+
 
     const [email, setEmail] = useState('eugenluchianov97@gmail.com');
     const [password, setPassword] = useState('');
@@ -17,6 +24,9 @@ export default (props:LoginProps) => {
     const [passwordEr, setPasswordEr] = useState([]);
     const [credentialsEr, setCredentialsEr] = useState([]);
     const [loading, setLoading] = useState(false);
+
+
+
     const Login = () => {
         setLoading(true)
 
@@ -25,9 +35,12 @@ export default (props:LoginProps) => {
              password:password
         }
         login(data).then((res:any) => {
-
+            console.log(res);
             if(res.status === 200){
+
                  localStorage.setItem('token',res.data.token);
+                _setUser(res.data.user)
+                 props.closeModal()
             }
             setLoading(false)
 
@@ -63,7 +76,7 @@ export default (props:LoginProps) => {
     }
 
     const openRegister = () => {
-        props.openModal(<Register openModal={props.openModal}/>)
+        props.openModal(<Register openModal={props.openModal} closeModal={props.closeModal}/>)
     }
     const emailClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
     const passwordClass = "my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")

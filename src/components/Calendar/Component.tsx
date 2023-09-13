@@ -9,6 +9,7 @@ import _month from "./../../dictionares/month"
 import {getFromJSON} from "../../helper";
 
 import axios from 'axios'
+import Login from "../Login/Component";
 interface CalendarProps {
     modal: boolean,
     openModal:(element: JSX.Element) => void,
@@ -17,6 +18,9 @@ interface CalendarProps {
 }
 export default (props:CalendarProps) => {
 
+    useEffect(() => {
+        console.log("Calendar")
+    },[])
 
 
 

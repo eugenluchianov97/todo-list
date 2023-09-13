@@ -5,6 +5,7 @@ import Login from "./../Login/Component"
 
 interface RegisterProps {
     openModal:(element: JSX.Element) => void,
+    closeModal:() => void,
 }
 
 export default (props:RegisterProps) => {
@@ -44,7 +45,6 @@ export default (props:RegisterProps) => {
                     if(er[0] === 'password') {
                         setPasswordEr(er[1])
                     }
-
                 })
 
             }
@@ -54,7 +54,7 @@ export default (props:RegisterProps) => {
     }
 
     const openLogin = () => {
-        props.openModal(<Login openModal={props.openModal}/>)
+        props.openModal(<Login openModal={props.openModal} closeModal={props.closeModal}/>)
     }
     const emailClass = "my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
     const passwordClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")
