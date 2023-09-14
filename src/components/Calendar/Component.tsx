@@ -18,12 +18,6 @@ interface CalendarProps {
 }
 export default (props:CalendarProps) => {
 
-    useEffect(() => {
-        console.log("Calendar")
-    },[])
-
-
-
     const weekDays :any = _weekDays;
     const weekDaysFull:any = _weekDaysFull;
     const month:any = _month;
@@ -140,13 +134,7 @@ export default (props:CalendarProps) => {
 
 
     const openDay = (day:any):void => {
-        //только если день в будующем или сегодня
-        if(!dateInPast(new Date( day.year,day.month,day.date))){
-            props.openModal(<DayItem day={day} closeModal={closeModal} />)
-        }
-        else{
-            alert("Нельзя вешать задания на прошлое!")
-        }
+        props.openModal(<DayItem day={day} closeModal={closeModal} />)
 
 
     }
