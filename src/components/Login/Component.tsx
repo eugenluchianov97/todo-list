@@ -7,16 +7,13 @@ import Register from "./../Register/Component"
 import {login} from "../../api"
 
 import UserContext from "../../contexts/UserContext";
+import ModalContext from "../../contexts/ModalContext";
 
 
-interface LoginProps {
-    openModal:(element: JSX.Element) => void,
-    closeModal:() => void
-}
-export default (props:LoginProps) => {
+export default () => {
 
     const {user, _setUser} = useContext<any>(UserContext);
-
+    const {modal, _setModel} = useContext<any>(ModalContext);
 
     const [email, setEmail] = useState('eugenluchianov97@gmail.com');
     const [password, setPassword] = useState('');
@@ -39,7 +36,7 @@ export default (props:LoginProps) => {
 
                  localStorage.setItem('token',res.data.token);
                 _setUser(res.data.user)
-                 props.closeModal()
+                _setModel(false)
             }
             setLoading(false)
 
@@ -75,7 +72,7 @@ export default (props:LoginProps) => {
     }
 
     const openRegister = () => {
-        props.openModal(<Register openModal={props.openModal} closeModal={props.closeModal}/>)
+        _setModel(<Register/>)
     }
     const emailClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
     const passwordClass = "my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")

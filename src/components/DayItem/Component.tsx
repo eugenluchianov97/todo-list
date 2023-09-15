@@ -1,22 +1,27 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import _month from "../../dictionares/month";
 import _weekDaysFull from "../../dictionares/weekDaysFull";
 
 
-import {getFromJSON, setItem, setToJSON} from "../../helper";
 import {itemsIndex, itemsStore, itemsUpdate, itemsDelete, itemsComplete} from "../../api";
 
 
 import AddItem from "./../AddItem/Component"
-interface DaiItemProps {
-    day:any,
-    closeModal:() => void
+import ShowItem from "./../ShowItem/Component"
+import EditItem from "./../EditItem/Component"
+
+import ModalContext from "../../contexts/ModalContext";
+interface DayItemProps {
+    day:any
 }
 
 
-export default  (props:DaiItemProps) => {
+export default  (props:DayItemProps) => {
+
     const month:any = _month;
     const weekDaysFull:any = _weekDaysFull;
+
+    const {modal, _setModal} = useContext<any>(ModalContext);
 
     const [items, setItems] = useState<any>([])
     const [editedId, setEditedId] = useState<any>(null)
@@ -42,15 +47,11 @@ export default  (props:DaiItemProps) => {
 
 
 
-    const editItem = (item:any) => {
-        setEditedId(item.id)
-        setSubject(item.subject)
-        setText(item.text)
-    }
 
 
 
-    const saveEdited = async (day:any) => {
+
+    const updateItem = async (day:any) => {
         setLoading(true)
         let data = {
             subject:subject,
@@ -79,7 +80,6 @@ export default  (props:DaiItemProps) => {
 
 
         setEditedId(null)
-
     }
 
     const completeItem = (id:number) => {
@@ -119,15 +119,18 @@ export default  (props:DaiItemProps) => {
         setNewItem(true)
     }
 
+    const editItem = (item:any) => {
+        _setModal(<EditItem item={item} day={props.day}/>)
 
-    const closeModal = () => {
+    }
 
-        props.closeModal();
+    const showItem = (item:any) => {
+        _setModal(<ShowItem item={item} day={props.day}/>)
     }
 
     return (
         <>
-            <div className="w-4/5 sm:w-4/6 bg-white p-1 sm:p-4 shadow-xl relative">
+            <div className="w-4/5 sm:w-4/6 bg-white shadow-xl relative">
                 {loading && (
                     <div className="flex bg-white opacity-50 items-center justify-center absolute top-0 left-0 bottom-0 right-0" role="status">
                         <svg aria-hidden="true"
@@ -144,27 +147,17 @@ export default  (props:DaiItemProps) => {
                     </div>
                 )}
 
-
-                <div onClick={closeModal} className="cursor-pointer w-8 sm:w-16 h-8 sm:h-16 bg-teal-300 rounded-full -mt-5 sm:-mt-12  flex items-center justify-center absolute -right-4 sm:-right-8">
-                    <i className="fa fa-close text-white text-2xl "></i>
-                </div>
-                <div className="flex flex-col sm:flex-row justify-between items-center ">
-                    <div className="flex items-center">
-                        <div className=" text-lg sm:text-7xl text-slate-700 font-semibold">{props.day.date}</div>
-                        <div className="ml-1 flex sm:flex-col">
-                            <div className="text-lg sm:text-2xl font-medium text-slate-700">{month[props.day.month]}</div>
-                            <div className="text-lg sm:text-xl font-medium sm:-mt-1 text-slate-700">{props.day.year}</div>
-                        </div>
+                <div className="bg-teal-300 flex justify-between p-2">
+                    <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
+                    <div onClick={() => { _setModal(false)}} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <i className="fa fa-arrow-left text-teal-300 text-2xl "></i>
                     </div>
-
-
-                    <div className="font-medium text-slate-700 ">{weekDaysFull[props.day.day]}</div>
                 </div>
 
 
-                <div className=" my-2 sm:my-16 h-full overflow-y-auto h-80 sm:h-96 mx-1 sm:mx-4" >
-                    { items.length > 0 && items.map((item:any, idx:number) => {
-                        let className = "border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-green-300':'');
+                <div className=" my-2 sm:my-2 h-full overflow-y-auto sm:h-96 mx-1 sm:mx-4" >
+                    {!loading && items.length > 0 && items.map((item:any, idx:number) => {
+                        let className = "border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-green-200':'');
                         return (
                             <div key={idx} className={className} >
                                <div className="flex items-center w-full">
@@ -173,73 +166,44 @@ export default  (props:DaiItemProps) => {
                                    </div>
                                    <div className="mx-2 w-full">
                                        <p className="font-medium">
-                                           {editedId !== item.id && (
-                                             <>  {item.subject} </>
-                                           )}
-
-                                           {editedId == item.id && (
-                                               <input className=" p-1 border border-slate-300 outline-none w-full" onChange={(e) => {setSubject(e.target.value)}} value={subject} type="text"/>
-                                           )}
-
+                                           <>  {item.subject} </>
                                        </p>
-                                       <div className="text-sm font-light">
-                                           {editedId !== item.id && (
-                                               <> {item.text} </>
-                                           )}
-
-                                           {editedId == item.id && (
-                                               <textarea value={text} onChange={(e) => {setText(e.target.value)}} className="mt-1 border border-slate-300 w-full outline-none w-full">
-
-                                               </textarea>
-                                           )}
-
-
-                                       </div>
                                    </div>
                                </div>
                                 <div className="flex flex-col sm:flex-row items-between justify-center ">
-                                    {editedId !== item.id && (
-                                        <>
-                                            <div onClick={() => {deleteItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
-                                                <i className="fa fa-trash text-red-500"></i>
-                                            </div>
-                                            <div onClick={() => {editItem(item)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
-                                                <i className="fa fa-pencil text-blue-500"></i>
-                                            </div>
-                                            <div onClick={() => {completeItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
-                                                <i className="fa fa-star text-yellow-500"></i>
-                                            </div>
-                                        </>
-                                    )}
-                                    {editedId === item.id && (
-                                        <>
-                                            <div onClick={() => {saveEdited(item)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
-                                                <i className="fa fa-check text-green-500"></i>
-                                            </div>
-                                        </>
-                                    )}
-
-
-
+                                    <>
+                                        <div onClick={() => {deleteItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
+                                            <i className="fa fa-trash text-red-500"></i>
+                                        </div>
+                                        <div onClick={() => {editItem(item)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
+                                            <i className="fa fa-pencil text-blue-500"></i>
+                                        </div>
+                                        <div onClick={() => {showItem(item)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
+                                            <i className="fa fa-eye text-slate-600"></i>
+                                        </div>
+                                        <div onClick={() => {completeItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
+                                            <i className={"fa fa-star " + (item.done ? 'text-yellow-500' : 'text-slate-600')}></i>
+                                        </div>
+                                    </>
                                 </div>
                             </div>
                         )
                     })}
 
-                    {newItem && (
-                        <AddItem props={props.day} close={() => {setNewItem(false);}}/>
+                    {newItem &&(
+                        <AddItem loading={loading} props={props.day} close={() => {setNewItem(false);}}/>
                     )}
 
-                    {items.length === 0 && (
+                    {items.length === 0 && !loading && (
                             <div className="border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-center" >
                                 <p>Нет записей</p>
                             </div>
-                        )
-                    }
+                        )}
+
                 </div>
 
 
-                <div onClick={addItem } className="cursor-pointer w-8 sm:w-16 h-8 sm:h-16 bg-teal-300 rounded-full -mb-5 sm:-mb-12 mx-auto flex items-center justify-center">
+                <div onClick={addItem } className="cursor-pointer w-8 h-8 bg-teal-300 rounded-full -mb-4 mx-auto flex items-center justify-center">
                     <i className="fa fa-plus text-white text-2xl "></i>
                 </div>
             </div>

@@ -1,14 +1,17 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {register} from "../../api";
 
 import Login from "./../Login/Component"
+import ModalContext from "../../contexts/ModalContext";
 
 interface RegisterProps {
-    openModal:(element: JSX.Element) => void,
-    closeModal:() => void,
+    // openModal:(element: JSX.Element) => void,
+    // closeModal:() => void,
 }
 
 export default (props:RegisterProps) => {
+    const {modal, _setModel} = useContext<any>(ModalContext);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
@@ -54,7 +57,7 @@ export default (props:RegisterProps) => {
     }
 
     const openLogin = () => {
-        props.openModal(<Login openModal={props.openModal} closeModal={props.closeModal}/>)
+        _setModel(<Login/>)
     }
     const emailClass = "my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
     const passwordClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")

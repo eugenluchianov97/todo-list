@@ -1,5 +1,5 @@
 import "./style.css"
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useContext, useEffect, useState} from "react";
 
 import DayItem from "./../DayItem/Component"
 
@@ -8,12 +8,11 @@ import _weekDaysFull from "./../../dictionares/weekDaysFull"
 import _month from "./../../dictionares/month"
 import {getFromJSON} from "../../helper";
 
-import axios from 'axios'
-import Login from "../Login/Component";
+import ModalContext from "../../contexts/ModalContext";
 interface CalendarProps {
-    modal: boolean,
-    openModal:(element: JSX.Element) => void,
-    closeModal:() => void
+    // component: boolean|React.ReactNode,
+    // openModal:(element: JSX.Element) => void,
+    // closeModal:() => void
 
 }
 export default (props:CalendarProps) => {
@@ -23,6 +22,8 @@ export default (props:CalendarProps) => {
     const month:any = _month;
 
     const data = getFromJSON('ITEMS')
+
+    const {modal, _setModal} = useContext<any>(ModalContext);
 
 
     const today:Date = new Date();
@@ -129,22 +130,17 @@ export default (props:CalendarProps) => {
     }
 
     const closeModal = () => {
-        props.closeModal()
+        _setModal(false)
     }
 
 
     const openDay = (day:any):void => {
-        props.openModal(<DayItem day={day} closeModal={closeModal} />)
-
-
+        _setModal(<DayItem day={day} />)
     }
-
-
-    let className = "container w-3/4 flex flex-col sm:flex-row bg-teal-300 m-auto  " + (props.modal ? "blur-sm" : "")
 
     return (
 
-        <div className={className}>
+        <div className={"container w-3/4 flex flex-col sm:flex-row bg-teal-300 m-auto  " + (modal ? "blur-sm" : "")}>
 
             <div className="flex flex-col items-center justify-center w-full sm:w-4/12 bg-teal-300 ">
 
@@ -187,7 +183,7 @@ export default (props:CalendarProps) => {
 
                             })
 
-
+                            let className;
                             let dayClass:string = "day m-1 flex items-center justify-center cursor-pointer font-medium relative rounded-full border ";
                             let disabledClass = 'opacity-50 text-slate-600 ';
                             let todayClass = ' text-pink-600 border-pink-600  bg-pink-200  font-semibold   ';

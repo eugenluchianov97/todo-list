@@ -3,7 +3,8 @@ import {itemsStore} from "../../api";
 
 interface dataObj {
     props:any,
-    close:() => void
+    close:() => void,
+    loading:boolean
 
 }
 export default (props:dataObj) => {
@@ -12,9 +13,7 @@ export default (props:dataObj) => {
     const [newItemSubject, setNewItemSubject] = useState<any>('')
     const [newItemText, setNewItemText] = useState<any>('')
 
-    console.log(props)
     const saveNewItem = () => {
-        console.log('heree ----')
         let data = {
             subject:newItemSubject,
             text:newItemText,
