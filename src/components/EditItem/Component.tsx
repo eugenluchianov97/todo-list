@@ -16,6 +16,7 @@ export default (props:ShowItemProps) => {
 
 
     const [subject, setSubject] = useState(props.item.subject)
+    const [subjectEr, setSubjectEr] = useState([])
     const [text, setText] = useState(props.item.text)
     const [loading, setLoading] = useState(false)
     const back = () => {
@@ -43,7 +44,18 @@ export default (props:ShowItemProps) => {
             }
 
 
+        }).catch(err => {
+            if(err.response.status === 422){
+                Object.entries(err.response.data.errors).map((er :any) => {
+                    if(er[0] === 'subject') {
+                        setSubjectEr(er[1])
+                    }
+                })
+
+            }
+            setLoading(false);
         })
+
     }
     return (
         <>
@@ -72,7 +84,10 @@ export default (props:ShowItemProps) => {
                 </div>
                 <div className="text-xs text-slate-600 p-2">
                     <p className="font-semibold mb-1">Заголовок</p>
-                    <input placeholder="Заголовок..." className="w-full p-2 border border-slate-300 outline-none" value={subject}  onChange={(e) => {setSubject(e.target.value)}}/>
+                    <input placeholder="Заголовок..." className={"w-full p-2 border  outline-none " + (subjectEr.length > 0 ? "border-red-300" : "border-slate-300")} value={subject}  onChange={(e) => {setSubject(e.target.value)}}/>
+                    {setSubjectEr.length > 0 && (
+                        <p className="mt-1 text-red-300">{subjectEr}</p>
+                    )}
                 </div>
                 <div className="text-xs text-slate-600 p-2">
                     <p className="font-semibold mb-1">Описание задачи</p>

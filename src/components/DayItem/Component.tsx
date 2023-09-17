@@ -34,53 +34,13 @@ export default  (props:DayItemProps) => {
 
     useEffect( () => {
         setLoading(true)
-        setItems([])
         itemsIndex(props.day.date, props.day.month, props.day.year).then((res:any) => {
             if(res.status === 200){
                 setItems(res.data.items);
             }
             setLoading(false)
         })
-         setEditedId(null)
-         setNewItem(false)
     }, [props])
-
-
-
-
-
-
-
-    const updateItem = async (day:any) => {
-        setLoading(true)
-        let data = {
-            subject:subject,
-            text:text,
-            date:day.date,
-            month:day.month,
-            year:day.year,
-            timestamp:new Date(day.year,day.month,day.date).getTime(),
-            done:false
-        }
-
-        itemsUpdate(day.id,data).then((res:any) => {
-            if(res.status === 200){
-                itemsIndex(props.day.date, props.day.month, props.day.year).then((res:any) => {
-                    if(res.status === 200){
-                        setItems(res.data.items);
-                    }
-                    setLoading(false)
-                })
-            } else {
-                setLoading(false)
-            }
-
-
-        })
-
-
-        setEditedId(null)
-    }
 
     const completeItem = (id:number) => {
         setLoading(true)
@@ -95,8 +55,6 @@ export default  (props:DayItemProps) => {
                 })
             }
         })
-
-
     }
 
     const deleteItem = (id:number) => {
@@ -112,11 +70,10 @@ export default  (props:DayItemProps) => {
                 })
             }
         })
-
     }
 
     const addItem = () => {
-        setNewItem(true)
+        _setModal(<AddItem day={props.day} />)
     }
 
     const editItem = (item:any) => {
@@ -161,12 +118,9 @@ export default  (props:DayItemProps) => {
                         return (
                             <div key={idx} className={className} >
                                <div className="flex items-center w-full">
-                                   <div className="text-xl font-medium mx-1">
-                                       {++idx}.
-                                   </div>
-                                   <div className="mx-2 w-full">
+                                   <div className=" w-full">
                                        <p className="font-medium">
-                                           <>  {item.subject} </>
+                                           {++idx}.<>  {item.subject} </>
                                        </p>
                                    </div>
                                </div>
@@ -189,10 +143,6 @@ export default  (props:DayItemProps) => {
                             </div>
                         )
                     })}
-
-                    {newItem &&(
-                        <AddItem loading={loading} props={props.day} close={() => {setNewItem(false);}}/>
-                    )}
 
                     {items.length === 0 && !loading && (
                             <div className="border border-slate-300 rounded p-1 sm:p-3 my-1 select-none flex items-center justify-center" >
