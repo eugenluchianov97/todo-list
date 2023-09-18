@@ -9,19 +9,14 @@ import _month from "./../../dictionares/month"
 import {getFromJSON} from "../../helper";
 
 import ModalContext from "../../contexts/ModalContext";
-interface CalendarProps {
-    // component: boolean|React.ReactNode,
-    // openModal:(element: JSX.Element) => void,
-    // closeModal:() => void
-
-}
-export default (props:CalendarProps) => {
+import useAsyncEffect from "use-async-effect";
+import {itemsIndex, itemsTasks} from "../../api";
+export default () => {
 
     const weekDays :any = _weekDays;
     const weekDaysFull:any = _weekDaysFull;
     const month:any = _month;
 
-    const data = getFromJSON('ITEMS')
 
     const {modal, _setModal} = useContext<any>(ModalContext);
 
@@ -29,12 +24,30 @@ export default (props:CalendarProps) => {
     const today:Date = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth())
     const [currentYear, setCurrentYear] = useState(today.getFullYear())
+    const [tasks, setTasks] = useState<any>([])
+
+
+
+    const currentDay = today.getDate()
+
+    useAsyncEffect(async () => {
+
+        let result = await itemsTasks(currentMonth,currentYear);
+        console.log(result);
+        if(result.status === 200){
+            setTasks(result.data.items);
+        }
+
+
+    }, [currentMonth,currentYear])
+
+
 
     const getDaysInMonth = (year:number, month:number) => {
         return new Date(year, month+1, 0).getDate();
     }
 
-    const currentDay = today.getDate()
+
     const dayOfWeek = (day:number) => {
         return (day === 0) ? 7 : day
     }
@@ -129,10 +142,6 @@ export default (props:CalendarProps) => {
         }
     }
 
-    const closeModal = () => {
-        _setModal(false)
-    }
-
 
     const openDay = (day:any):void => {
         _setModal(<DayItem day={day} />)
@@ -173,16 +182,6 @@ export default (props:CalendarProps) => {
                     {
                         renderList().map((day, idx) => {
 
-
-                            let count = 0;
-                            data.filter((el:any) => {
-                                if(el.day === day.date && el.month === day.month && el.year === day.year && !el.done && !day.past ){
-
-                                    count++
-                                }
-
-                            })
-
                             let className;
                             let dayClass:string = "day m-1 flex items-center justify-center cursor-pointer font-medium relative rounded-full border ";
                             let disabledClass = 'opacity-50 text-slate-600 ';
@@ -206,6 +205,15 @@ export default (props:CalendarProps) => {
                                 className = dayClass
                             }
 
+
+                            let count = 0;
+
+                            tasks.map((task:any) => {
+                                if(task.date === day.date && task.month === day.month && task.year === day.year){
+                                    count++
+                                }
+
+                            })
                             return (
 
                                 <div key={idx} onClick={() => {openDay(day)}} className={className}>

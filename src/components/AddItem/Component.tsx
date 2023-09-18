@@ -23,7 +23,7 @@ export default (props:ShowItemProps) => {
         _setModal(<DayItem day={props.day} />)
     }
 
-    const store = () => {
+    const store = async () => {
         setLoading(true);
         let data = {
             subject:subject,
@@ -36,23 +36,22 @@ export default (props:ShowItemProps) => {
         }
 
 
-        itemsStore(data).then((res:any) => {
-            if(res.status === 200){
-                setLoading(false);
-                _setModal(<DayItem day={props.day} />)
-
-            }
-        }).catch(err => {
-            if(err.response.status === 422){
-                Object.entries(err.response.data.errors).map((er :any) => {
-                    if(er[0] === 'subject') {
-                        setSubjectEr(er[1])
-                    }
-                })
-
-            }
+        let result = await itemsStore(data)
+        console.log(result);
+        if(result.status === 200){
             setLoading(false);
-        })
+            _setModal(<DayItem day={props.day} />)
+
+        }
+
+        if(result.response && result.response.status === 422){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'subject') {
+                    setSubjectEr(er[1])
+                }
+            })
+            setLoading(false);
+        }
 
 
     }

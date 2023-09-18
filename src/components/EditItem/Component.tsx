@@ -14,7 +14,6 @@ export default (props:ShowItemProps) => {
 
     const month:any = _month;
 
-
     const [subject, setSubject] = useState(props.item.subject)
     const [subjectEr, setSubjectEr] = useState([])
     const [text, setText] = useState(props.item.text)
@@ -23,7 +22,7 @@ export default (props:ShowItemProps) => {
         _setModal(<DayItem day={props.day} />)
     }
 
-    const update = () => {
+    const update = async () => {
         setLoading(true);
         let data = {
             subject:subject,
@@ -35,26 +34,22 @@ export default (props:ShowItemProps) => {
             done:false
         }
 
-        itemsUpdate(props.item.id,data).then((res:any) => {
-            if(res.status === 200){
-                setLoading(false);
-                _setModal(<DayItem day={props.day} />)
-            } else {
-                setLoading(false);
-            }
+        let result = await itemsUpdate(props.item.id,data)
 
+        if(result.status === 200){
+             setLoading(false);
+            _setModal(<DayItem day={props.day} />)
+        }
 
-        }).catch(err => {
-            if(err.response.status === 422){
-                Object.entries(err.response.data.errors).map((er :any) => {
-                    if(er[0] === 'subject') {
-                        setSubjectEr(er[1])
-                    }
-                })
+        if(result.response && result.response.status === 422){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'subject') {
+                    setSubjectEr(er[1])
+                }
+            })
 
-            }
             setLoading(false);
-        })
+        }
 
     }
     return (
@@ -97,9 +92,6 @@ export default (props:ShowItemProps) => {
                 <div className="text-xs p-2">
                     <button onClick={update} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Сохранить</button>
                 </div>
-
-
-
             </div>
         </>
     )

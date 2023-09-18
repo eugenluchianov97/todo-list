@@ -67,7 +67,7 @@ export const me = () => {
 }
 
 
-export const itemsStore = (data:any) => {
+export const itemsStore = async (data:any) => {
     const config = {
         headers:{
             "Authorization": "Bearer " + token(),
@@ -77,11 +77,14 @@ export const itemsStore = (data:any) => {
         withCredentials: true
     }
 
-    return axios.post(host+'/api/items',data, config)
+    return await axios.post(host+'/api/items',data, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
 }
 
-export const itemsIndex = (date:number, month:number, year:number) => {
-    console.log('here')
+export const itemsIndex = async (date:number, month:number, year:number) => {
     const config = {
         headers:{
             "Authorization": "Bearer " + token(),
@@ -91,7 +94,9 @@ export const itemsIndex = (date:number, month:number, year:number) => {
         withCredentials: true
     }
 
-    return axios.get(host+'/api/items?date='+date + '&month='+month + '&year='+year, config)
+    return await axios.get(host+'/api/items?date='+date + '&month='+month + '&year='+year, config).then((res:any) => {
+        return res;
+    })
 }
 
 
@@ -105,7 +110,11 @@ export const itemsUpdate = async (id:number,data:any) => {
         withCredentials: true
     }
 
-    return axios.post(host+'/api/items/' + id,data, config)
+    return await axios.post(host+'/api/items/' + id,data, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
 }
 
 
@@ -119,7 +128,11 @@ export const itemsDelete = async (id:number) => {
         withCredentials: true
     }
 
-    return axios.delete(host+'/api/items/' + id, config)
+    return await axios.delete(host+'/api/items/' + id, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
 }
 
 export const itemsComplete = async (id:number) => {
@@ -132,5 +145,24 @@ export const itemsComplete = async (id:number) => {
         withCredentials: true
     }
 
-    return axios.post(host+'/api/items/complete/' + id,{}, config)
+    return await  axios.post(host+'/api/items/complete/' + id,{}, config).then((res:any) => {
+        return res;
+    }).catch(err => {return err})
+}
+
+
+export const itemsTasks = async (month:number, year:number) => {
+
+    const config = {
+        headers:{
+            "Authorization": "Bearer " + token(),
+            "Accept":"application/json",
+
+        },
+        withCredentials: true
+    }
+
+    return await axios.get(host+'/api/items/tasks?month='+month + '&year='+year, config).then((res:any) => {
+        return res;
+    })
 }
