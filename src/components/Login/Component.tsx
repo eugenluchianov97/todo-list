@@ -13,7 +13,7 @@ import ModalContext from "../../contexts/ModalContext";
 export default () => {
 
     const {user, _setUser} = useContext<any>(UserContext);
-    const {modal, _setModel} = useContext<any>(ModalContext);
+    const {modal, _setModal} = useContext<any>(ModalContext);
 
     const [email, setEmail] = useState('eugenluchianov97@gmail.com');
     const [password, setPassword] = useState('');
@@ -24,55 +24,54 @@ export default () => {
 
 
 
-    const Login = () => {
+    const Login = async () => {
         setLoading(true)
 
         const data = {
              email:email,
              password:password
         }
-        login(data).then((res:any) => {
-            if(res.status === 200){
+        let result = await login(data)
 
-                 localStorage.setItem('token',res.data.token);
-                _setUser(res.data.user)
-                _setModel(false)
-            }
-            setLoading(false)
+        if(result.status === 200){
 
-        }).catch(err => {
-            if(err.response.status === 422){
-                Object.entries(err.response.data.errors).map((er :any) => {
-                    if(er[0] === 'email') {
-                        setEmailEr(er[1])
-                    }
-
-                    if(er[0] === 'password') {
-                        setPasswordEr(er[1])
-                    }
-
-                })
-
-            }
-
-            if(err.response.status === 401){
-                Object.entries(err.response.data.errors).map((er :any) => {
-                    if(er[0] === 'credentials') {
-                        setCredentialsEr(er[1])
-                    }
+            localStorage.setItem('token',result.data.token);
+            _setUser(result.data.user)
+            _setModal(false)
+        }
 
 
-                })
+        if(result.response && result.response.status === 422){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'email') {
+                    setEmailEr(er[1])
+                }
 
-            }
+                if(er[0] === 'password') {
+                    setPasswordEr(er[1])
+                }
 
-            setLoading(false)
-        });
+            })
+
+        }
+
+        if(result.response && result.response.status === 401){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'credentials') {
+                    setCredentialsEr(er[1])
+                }
+
+
+            })
+
+        }
+
+        setLoading(false)
 
     }
 
     const openRegister = () => {
-        _setModel(<Register/>)
+        _setModal(<Register/>)
     }
     const emailClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
     const passwordClass = "my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")

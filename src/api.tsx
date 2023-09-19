@@ -6,13 +6,15 @@ const token = () => {
     return localStorage.getItem("token")
 }
 
-export const csrf_cookie = () => {
+export const csrf_cookie = async () => {
     const config = {
         withCredentials: true
     }
-    return axios.get(host + '/sanctum/csrf-cookie',config)
+    return await  axios.get(host + '/sanctum/csrf-cookie',config).then(res => {
+        return res;
+    })
 }
-export const login = (data:any) => {
+export const login = async (data:any) => {
     const config = {
         headers:{
             //"Authorization": "Bearer " + token,
@@ -22,26 +24,33 @@ export const login = (data:any) => {
         withCredentials: true
     }
 
-    return csrf_cookie().then((res:any) => {
-        return axios.post(host+'/api/auth/login',data, config)
+    await csrf_cookie()
+
+    return await axios.post(host+'/api/auth/login',data, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
     })
 }
 
 
-export const register = (data:any) => {
+export const register = async (data:any) => {
     const config = {
         headers:{
             "Accept":"application/json",
         },
         withCredentials: true
     }
+    await csrf_cookie();
 
-    return csrf_cookie().then((res:any) => {
-        return axios.post(host+'/api/auth/register',data, config)
+    return await axios.post(host+'/api/auth/register',data, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
     })
 }
 
-export const logout = () => {
+export const logout = async () => {
     const config = {
         headers:{
             "Authorization": "Bearer " + token(),
@@ -50,10 +59,14 @@ export const logout = () => {
         withCredentials: true
     }
 
-    return axios.post(host+'/api/auth/logout',{}, config)
+    return await axios.post(host+'/api/auth/logout',{}, config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
 }
 
-export const me = () => {
+export const me = async () => {
     const config = {
         headers:{
             "Authorization": "Bearer " + token(),
@@ -63,7 +76,11 @@ export const me = () => {
         withCredentials: true
     }
 
-    return axios.get(host+'/api/me', config)
+    return await axios.get(host+'/api/me', config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
 }
 
 
@@ -164,5 +181,5 @@ export const itemsTasks = async (month:number, year:number) => {
 
     return await axios.get(host+'/api/items/tasks?month='+month + '&year='+year, config).then((res:any) => {
         return res;
-    })
+    }).catch(err => {return err})
 }

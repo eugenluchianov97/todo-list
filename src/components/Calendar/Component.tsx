@@ -11,20 +11,24 @@ import {getFromJSON} from "../../helper";
 import ModalContext from "../../contexts/ModalContext";
 import useAsyncEffect from "use-async-effect";
 import {itemsIndex, itemsTasks} from "../../api";
+import UserContext from "../../contexts/UserContext";
+import TasksContext from "../../contexts/TasksContext";
 export default () => {
 
     const weekDays :any = _weekDays;
     const weekDaysFull:any = _weekDaysFull;
     const month:any = _month;
 
-
+    const {user, _setUser} = useContext<any>(UserContext);
     const {modal, _setModal} = useContext<any>(ModalContext);
+    const {tasks, _setTasks} = useContext<any>(TasksContext);
 
 
     const today:Date = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth())
     const [currentYear, setCurrentYear] = useState(today.getFullYear())
-    const [tasks, setTasks] = useState<any>([])
+
+
 
 
 
@@ -32,14 +36,13 @@ export default () => {
 
     useAsyncEffect(async () => {
 
-        let result = await itemsTasks(currentMonth,currentYear);
-        console.log(result);
-        if(result.status === 200){
-            setTasks(result.data.items);
+        let result2 = await itemsTasks(currentMonth,currentYear);
+
+
+        if(result2.status === 200){
+            _setTasks(result2.data.items);
         }
-
-
-    }, [currentMonth,currentYear])
+    }, [currentMonth,user])
 
 
 
@@ -122,7 +125,8 @@ export default () => {
         return days;
     }
 
-    const nextMonth = () => {
+    const nextMonth = async () => {
+
         if(currentMonth + 1 > 11){
             setCurrentMonth(0);
             setCurrentYear(currentYear+1)
@@ -130,9 +134,12 @@ export default () => {
         else{
             setCurrentMonth(currentMonth + 1)
         }
+
     }
 
-    const prevMonth = () => {
+
+
+    const prevMonth = async () => {
         if(currentMonth - 1 < 0){
             setCurrentMonth(11);
             setCurrentYear(currentYear-1)
@@ -140,6 +147,7 @@ export default () => {
         else{
             setCurrentMonth(currentMonth - 1)
         }
+
     }
 
 

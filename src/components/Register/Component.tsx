@@ -3,6 +3,7 @@ import {register} from "../../api";
 
 import Login from "./../Login/Component"
 import ModalContext from "../../contexts/ModalContext";
+import UserContext from "../../contexts/UserContext";
 
 interface RegisterProps {
     // openModal:(element: JSX.Element) => void,
@@ -10,7 +11,8 @@ interface RegisterProps {
 }
 
 export default (props:RegisterProps) => {
-    const {modal, _setModel} = useContext<any>(ModalContext);
+    const {modal, _setModal} = useContext<any>(ModalContext);
+    const {user, _setUser} = useContext<any>(UserContext);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,43 +23,44 @@ export default (props:RegisterProps) => {
     const [credentialsEr, setCredentialsEr] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const Register = () => {
+    const Register = async () => {
         setLoading(true)
-        //
+
         const data = {
             email:email,
             password:password,
             name:name
         }
-        register(data).then((res:any) => {
+        let result = await register(data);
 
-            if(res.status === 200){
-                localStorage.setItem('token',res.data.token);
+        if(result.status === 200){
+            localStorage.setItem('token',result.data.token);
+            if(result.status === 200){
+                _setUser(result.data.user)
             }
-            setLoading(false)
+            _setModal(false);
+        }
 
-        }).catch(err => {
-            if(err.response.status === 422){
-                Object.entries(err.response.data.errors).map((er :any) => {
-                    if(er[0] === 'name') {
-                        setNameEr(er[1])
-                    }
-                    if(er[0] === 'email') {
-                        setEmailEr(er[1])
-                    }
-                    if(er[0] === 'password') {
-                        setPasswordEr(er[1])
-                    }
-                })
+        if(result.response && result.response.status === 422){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'name') {
+                    setNameEr(er[1])
+                }
+                if(er[0] === 'email') {
+                    setEmailEr(er[1])
+                }
+                if(er[0] === 'password') {
+                    setPasswordEr(er[1])
+                }
+            })
+        }
 
-            }
-            setLoading(false)
-        });
+        setLoading(false)
 
     }
 
     const openLogin = () => {
-        _setModel(<Login/>)
+        _setModal(<Login/>)
     }
     const emailClass = "my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
     const passwordClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")
