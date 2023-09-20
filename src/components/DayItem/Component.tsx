@@ -3,7 +3,7 @@ import _month from "../../dictionares/month";
 import _weekDaysFull from "../../dictionares/weekDaysFull";
 
 
-import {itemsIndex, itemsStore, itemsUpdate, itemsDelete, itemsComplete} from "../../api";
+import {itemsIndex, itemsStore, itemsUpdate, itemsDelete, itemsComplete, itemsTasks} from "../../api";
 
 
 import AddItem from "./../AddItem/Component"
@@ -12,6 +12,8 @@ import EditItem from "./../EditItem/Component"
 
 import ModalContext from "../../contexts/ModalContext";
 import useAsyncEffect from "use-async-effect";
+import TasksContext from "../../contexts/TasksContext";
+import {Store} from "react-notifications-component";
 interface DayItemProps {
     day:any
 }
@@ -23,6 +25,7 @@ export default  (props:DayItemProps) => {
     const weekDaysFull:any = _weekDaysFull;
 
     const {modal, _setModal} = useContext<any>(ModalContext);
+    const {tasks, _setTasks} = useContext<any>(TasksContext);
 
     const [items, setItems] = useState<any>([])
     const [editedId, setEditedId] = useState<any>(null)
@@ -51,6 +54,19 @@ export default  (props:DayItemProps) => {
         let result  = await itemsComplete(id);
 
         if(result.status === 200){
+            Store.addNotification({
+                title: "Выполненно!",
+                message: "",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3000,
+                    onScreen: true
+                }
+            });
             let res = await itemsIndex(props.day.date, props.day.month, props.day.year);
             if(res.status === 200){
                 setItems(res.data.items);
@@ -64,8 +80,26 @@ export default  (props:DayItemProps) => {
 
         let result  = await itemsDelete(id);
         if(result.status === 200){
-
+            Store.addNotification({
+                title: "Успешно удалено!",
+                message: "",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3000,
+                    onScreen: true
+                }
+            });
             let res = await itemsIndex(props.day.date, props.day.month, props.day.year);
+            let result2 = await itemsTasks(props.day.month,props.day.year);
+
+
+            if(result2.status === 200){
+                _setTasks(result2.data.items);
+            }
             if(res.status === 200){
                 setItems(res.data.items);
                 setLoading(false)
@@ -84,6 +118,10 @@ export default  (props:DayItemProps) => {
 
     const showItem = (item:any) => {
         _setModal(<ShowItem item={item} day={props.day}/>)
+    }
+
+    const back = () => {
+        _setModal(false)
     }
 
     return (
@@ -107,8 +145,8 @@ export default  (props:DayItemProps) => {
 
                 <div className="bg-teal-300 flex justify-between p-2">
                     <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
-                    <div onClick={() => { _setModal(false)}} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-arrow-left text-teal-300 text-2xl "></i>
+                    <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <i className="fa fa-close text-teal-300 text-2xl "></i>
                     </div>
                 </div>
 
@@ -150,7 +188,7 @@ export default  (props:DayItemProps) => {
                     })}
 
                     {items.length === 0 && !loading && (
-                            <div className="border border-slate-300 rounded p-1 my-1 text-sm select-none flex items-center justify-center" >
+                            <div className="border border-slate-300 rounded p-2 my-1 text-xs select-none flex items-center justify-center" >
                                 <p>Нет записей</p>
                             </div>
                         )}

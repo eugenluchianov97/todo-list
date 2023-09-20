@@ -2,13 +2,16 @@ import React, {useContext, useState} from "react";
 import ModalContext from "../../contexts/ModalContext";
 import DayItem from "../DayItem/Component";
 import _month from "../../dictionares/month";
-import {itemsIndex, itemsStore} from "../../api";
+import {itemsIndex, itemsStore, itemsTasks} from "../../api";
+import TasksContext from "../../contexts/TasksContext";
+import {Store} from "react-notifications-component";
 
 interface ShowItemProps {
     day:any
 }
 export default (props:ShowItemProps) => {
     const {modal, _setModal} = useContext<any>(ModalContext);
+    const {tasks, _setTasks} = useContext<any>(TasksContext);
 
     const month:any = _month;
 
@@ -37,11 +40,28 @@ export default (props:ShowItemProps) => {
 
 
         let result = await itemsStore(data)
-        console.log(result);
         if(result.status === 200){
+            Store.addNotification({
+                title: "Успешно добавленно!",
+                message: "",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3000,
+                    onScreen: true
+                }
+            });
             setLoading(false);
-            _setModal(<DayItem day={props.day} />)
+            let result2 = await itemsTasks(props.day.month,props.day.year);
 
+
+            if(result2.status === 200){
+                _setTasks(result2.data.items);
+            }
+            _setModal(<DayItem day={props.day} />)
         }
 
         if(result.response && result.response.status === 422){
@@ -77,7 +97,7 @@ export default (props:ShowItemProps) => {
                 <div className="bg-teal-300 flex justify-between p-2">
                     <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
                     <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-arrow-left text-teal-300 text-2xl "></i>
+                        <i className="fa fa-close text-teal-300 text-2xl "></i>
                     </div>
                 </div>
                 <div className="text-xs text-slate-600 p-2">

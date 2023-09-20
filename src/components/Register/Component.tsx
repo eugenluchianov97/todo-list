@@ -5,6 +5,8 @@ import Login from "./../Login/Component"
 import ModalContext from "../../contexts/ModalContext";
 import UserContext from "../../contexts/UserContext";
 
+import ConfirmRegister from "./../ConfirmRegister/Component"
+
 interface RegisterProps {
     // openModal:(element: JSX.Element) => void,
     // closeModal:() => void,
@@ -35,10 +37,8 @@ export default (props:RegisterProps) => {
 
         if(result.status === 200){
             localStorage.setItem('token',result.data.token);
-            if(result.status === 200){
-                _setUser(result.data.user)
-            }
-            _setModal(false);
+            _setUser(result.data.user)
+            _setModal(<ConfirmRegister/>);
         }
 
         if(result.response && result.response.status === 422){
@@ -85,16 +85,17 @@ export default (props:RegisterProps) => {
             )}
 
             <div className="p-3">
+                <p className="font-semibold mb-1">Имя</p>
                 <input value={name} onChange={(e) => {setName(e.target.value);setNameEr([]);setCredentialsEr([])}} className={nameClass} type="text" placeholder="Имя"/>
                 {nameEr.length > 0 && (
                     <p className="text-red-300">{nameEr[0]}</p>
                 )}
-
+                <p className="font-semibold mb-1">Почта</p>
                 <input value={email} onChange={(e) => {setEmail(e.target.value);setEmailEr([]);setCredentialsEr([])}} className={emailClass} type="email" placeholder="Email"/>
                 {emailEr.length > 0 && (
                     <p className="text-red-300">{emailEr[0]}</p>
                 )}
-
+                <p className="font-semibold mb-1">Пароль</p>
                 <input value={password} onChange={(e) => {setPassword(e.target.value);setPasswordEr([]);setCredentialsEr([])}} className={passwordClass} type="password" placeholder="Пароль"/>
                 {passwordEr.length > 0 && (
                     <p className="text-red-300">{passwordEr[0]}</p>
@@ -109,8 +110,6 @@ export default (props:RegisterProps) => {
                 <p onClick={openLogin} className="cursor-pointer hover:text-teal-300">Уже имеете аккаунт?</p>
                 <p className="cursor-pointer hover:text-teal-300">Забыли пароль?</p>
             </div>
-
-
 
         </div>
     )

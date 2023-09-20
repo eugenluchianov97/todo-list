@@ -1,10 +1,10 @@
 import React, {useContext, useState} from "react";
 
 
-import Register from "./../Register/Component"
+import Login from "./../Login/Component"
 
 
-import {login} from "../../api"
+import {confirmCode} from "../../api"
 
 import UserContext from "../../contexts/UserContext";
 import ModalContext from "../../contexts/ModalContext";
@@ -16,32 +16,24 @@ export default () => {
     const {user, _setUser} = useContext<any>(UserContext);
     const {modal, _setModal} = useContext<any>(ModalContext);
 
-    const [email, setEmail] = useState('eugenluchianov97@gmail.com');
-    const [password, setPassword] = useState('');
-    const [emailEr, setEmailEr] = useState([]);
-    const [passwordEr, setPasswordEr] = useState([]);
-    const [credentialsEr, setCredentialsEr] = useState([]);
+    const [code, setCode] = useState<any>('');
+    const [codeEr, setCodeEr] = useState<any>('');
+
     const [loading, setLoading] = useState(false);
 
 
 
-    const Login = async () => {
+    const confirmRegister = async () => {
         setLoading(true)
 
         const data = {
-             email:email,
-             password:password
+            code:code,
         }
-        let result = await login(data)
-
+        let result = await confirmCode(data)
 
         if(result.status === 200){
-
-            localStorage.setItem('token',result.data.token);
-            _setUser(result.data.user)
-            _setModal(false)
             Store.addNotification({
-                title: "Успешный вход!",
+                title: "Успешное подтверждение!",
                 message: "",
                 type: "success",
                 insert: "top",
@@ -53,56 +45,26 @@ export default () => {
                     onScreen: true
                 }
             });
+            _setModal(false)
         }
 
-        if(result.response && result.response.status === 403){
-            Store.addNotification({
-                title: "Почта не подтвержденна!",
-                message: "",
-                type: "danger",
-                insert: "top",
-                container: "top-right",
-                animationIn: ["animate__animated", "animate__fadeIn"],
-                animationOut: ["animate__animated", "animate__fadeOut"],
-                dismiss: {
-                    duration: 3000,
-                    onScreen: true
-                }
-            });
-        }
         if(result.response && result.response.status === 422){
             Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'email') {
-                    setEmailEr(er[1])
-                }
-
-                if(er[0] === 'password') {
-                    setPasswordEr(er[1])
+                if(er[0] === 'code') {
+                    setCodeEr(er[1])
                 }
             })
-
-        }
-
-        if(result.response && result.response.status === 401){
-            Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'credentials') {
-                    setCredentialsEr(er[1])
-                }
-
-
-            })
-
         }
 
         setLoading(false)
 
     }
 
-    const openRegister = () => {
-        _setModal(<Register/>)
+    const openLogin = () => {
+        _setModal(<Login/>)
     }
-    const emailClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
-    const passwordClass = "my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")
+    const codeClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
+
     return (
 
         <>
@@ -124,28 +86,18 @@ export default () => {
                 )}
 
                 <div className="p-3">
-                    <p className="font-semibold mb-1">Почта</p>
-                    <input value={email} onChange={(e) => {setEmail(e.target.value);setEmailEr([]);setCredentialsEr([])}} className={emailClass} type="email" placeholder="Email"/>
-                    {emailEr.length > 0 && (
-                        <p className="text-red-300">{emailEr[0]}</p>
-                    )}
-                    <p className="font-semibold mb-1">Пароль</p>
-                    <input value={password} onChange={(e) => {setPassword(e.target.value);setPasswordEr([]);setCredentialsEr([])}} className={passwordClass} type="password" placeholder="Пароль"/>
-                    {passwordEr.length > 0 && (
-                        <p className="text-red-300">{passwordEr[0]}</p>
+                    <p className="font-semibold mb-1">Подтверждение кода</p>
+                    <input value={code} onChange={(e) => {setCode(e.target.value);}} className={codeClass} type="email" placeholder="Code"/>
+                    {codeEr.length > 0 && (
+                        <p className="text-red-300">{codeEr[0]}</p>
                     )}
 
-                    {credentialsEr.length > 0 && (
-                        <p className="text-red-300">{credentialsEr[0]}</p>
-                    )}
-                    <button onClick={Login} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Войти</button>
+                    <button onClick={confirmRegister} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Войти</button>
                 </div>
                 <div className="p-3 flex justify-between">
-                    <p onClick={openRegister} className="cursor-pointer hover:text-teal-300">Регистрация</p>
+                    <p onClick={openLogin} className="cursor-pointer hover:text-teal-300">Войти</p>
                     <p className="cursor-pointer hover:text-teal-300">Забыли пароль?</p>
                 </div>
-
-
 
             </div>
 

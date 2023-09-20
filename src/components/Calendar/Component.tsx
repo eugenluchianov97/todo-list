@@ -35,7 +35,7 @@ export default () => {
     const currentDay = today.getDate()
 
     useAsyncEffect(async () => {
-
+        _setTasks([]);
         let result2 = await itemsTasks(currentMonth,currentYear);
 
 

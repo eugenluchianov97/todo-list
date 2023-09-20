@@ -4,6 +4,7 @@ import ModalContext from "../../contexts/ModalContext";
 import DayItem from "../DayItem/Component";
 import _month from "../../dictionares/month";
 import {itemsIndex, itemsUpdate} from "../../api";
+import {Store} from "react-notifications-component";
 
 interface ShowItemProps {
     item:any,
@@ -37,6 +38,19 @@ export default (props:ShowItemProps) => {
         let result = await itemsUpdate(props.item.id,data)
 
         if(result.status === 200){
+            Store.addNotification({
+                title: "Успешно обновленно!",
+                message: "",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3000,
+                    onScreen: true
+                }
+            });
              setLoading(false);
             _setModal(<DayItem day={props.day} />)
         }
@@ -74,7 +88,7 @@ export default (props:ShowItemProps) => {
                 <div className="bg-teal-300 flex justify-between p-2">
                     <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
                     <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-arrow-left text-teal-300 text-2xl "></i>
+                        <i className="fa fa-close text-teal-300 text-2xl "></i>
                     </div>
                 </div>
                 <div className="text-xs text-slate-600 p-2">

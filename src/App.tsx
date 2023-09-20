@@ -14,6 +14,10 @@ import TasksContext from "./contexts/TasksContext";
 import {me, logout, itemsTasks} from "./api"
 import useAsyncEffect from "use-async-effect";
 
+
+import { ReactNotifications } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+
 function App() {
 
     useAsyncEffect(async () => {
@@ -26,6 +30,9 @@ function App() {
             if(result.status === 200){
 
                 _setUser(result.data.user)
+            }
+            else {
+                _setModal(<Login/> );
             }
             setLoading(false)
         }
@@ -71,6 +78,7 @@ function App() {
         <ModalContext.Provider value={{modal,_setModal}}>
             <UserContext.Provider value={{user,_setUser}}>
                 <TasksContext.Provider value={{tasks,_setTasks}}>
+                    <ReactNotifications />
                     <div className="flex flex-col justify-center ralative">
 
                         {user && (

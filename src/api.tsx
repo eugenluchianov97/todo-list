@@ -12,7 +12,7 @@ export const csrf_cookie = async () => {
     }
     return await  axios.get(host + '/sanctum/csrf-cookie',config).then(res => {
         return res;
-    })
+    }).catch(err => { return err})
 }
 export const login = async (data:any) => {
     const config = {
@@ -24,13 +24,19 @@ export const login = async (data:any) => {
         withCredentials: true
     }
 
-    await csrf_cookie()
+    let result = await csrf_cookie()
 
-    return await axios.post(host+'/api/auth/login',data, config).then((res:any) => {
-        return res;
-    }).catch(err => {
-        return err
-    })
+    if(result.status === 204){
+        return await axios.post(host+'/api/auth/login',data, config).then((res:any) => {
+            return res;
+        }).catch(err => {
+            return err
+        })
+    }
+
+    return result
+
+
 }
 
 
@@ -41,13 +47,18 @@ export const register = async (data:any) => {
         },
         withCredentials: true
     }
-    await csrf_cookie();
 
-    return await axios.post(host+'/api/auth/register',data, config).then((res:any) => {
-        return res;
-    }).catch(err => {
-        return err
-    })
+    let result = await csrf_cookie()
+
+    if(result.status === 204){
+        return await axios.post(host+'/api/auth/register',data, config).then((res:any) => {
+            return res;
+        }).catch(err => {
+            return err
+        })
+    }
+
+    return result
 }
 
 export const logout = async () => {
@@ -180,6 +191,22 @@ export const itemsTasks = async (month:number, year:number) => {
     }
 
     return await axios.get(host+'/api/items/tasks?month='+month + '&year='+year, config).then((res:any) => {
+        return res;
+    }).catch(err => {return err})
+}
+
+
+export const confirmCode = async (data:any) => {
+    const config = {
+        headers:{
+            "Authorization": "Bearer " + token(),
+            "Accept":"application/json",
+
+        },
+        withCredentials: true
+    }
+
+    return await  axios.post(host+'/api/auth/confirm',data, config).then((res:any) => {
         return res;
     }).catch(err => {return err})
 }
