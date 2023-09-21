@@ -13,6 +13,8 @@ import useAsyncEffect from "use-async-effect";
 import {itemsIndex, itemsTasks} from "../../api";
 import UserContext from "../../contexts/UserContext";
 import TasksContext from "../../contexts/TasksContext";
+
+import AddItem from "./../AddItem/Component"
 export default () => {
 
     const weekDays :any = _weekDays;
@@ -37,6 +39,7 @@ export default () => {
     useAsyncEffect(async () => {
         _setTasks([]);
         let result2 = await itemsTasks(currentMonth,currentYear);
+
 
 
         if(result2.status === 200){
@@ -155,11 +158,15 @@ export default () => {
         _setModal(<DayItem day={day} />)
     }
 
+    const addItem = () => {
+        _setModal(<AddItem />)
+    }
+
     return (
 
-        <div className={"container w-3/4 flex flex-col sm:flex-row bg-teal-300 m-auto  " + (modal ? "blur-sm" : "")}>
+        <div className={"container w-3/4 flex flex-col sm:flex-row bg-slate-300 m-auto  " + (modal ? "blur-sm" : "")}>
 
-            <div className="flex flex-col items-center justify-center w-full sm:w-4/12 bg-teal-300 ">
+            <div className="flex flex-col items-center justify-center w-full sm:w-4/12 bg-slate-700 ">
 
                 <h1 className="uppercase font-light text-white m-3 sm:m-6 select-none">{weekDaysFull[dayOfWeek(today.getDay())]}</h1>
                 <p className="font-light text-8xl sm:text-9xl text-white mb-4 sm:mb-8 select-none">{currentDay}</p>
@@ -170,7 +177,7 @@ export default () => {
                     <button onClick={prevMonth}>
                         <i className="fa fa-chevron-left text-slate-300 font-bold text-4xl"></i>
                     </button>
-                    <p className="text-xl text-teal-600 uppercase font-semibold">{month[currentMonth]} {currentYear}</p>
+                    <p className="text-xl text-slate-700 uppercase font-semibold">{month[currentMonth]} {currentYear}</p>
                     <button onClick={nextMonth}>
                         <i className="fa fa-chevron-right text-slate-300 font-bold text-4xl"></i>
                     </button>
@@ -185,7 +192,7 @@ export default () => {
                 </div>
 
 
-                <div className="days-container mx-auto pb-8">
+                <div className="days-container mx-auto pb-8 mb-8">
 
                     {
                         renderList().map((day, idx) => {
@@ -222,6 +229,8 @@ export default () => {
                                 }
 
                             })
+
+
                             return (
 
                                 <div key={idx} onClick={() => {openDay(day)}} className={className}>
@@ -236,6 +245,10 @@ export default () => {
                             )
                         })
                     }
+                </div>
+
+                <div onClick={addItem} className="absolute w-8 h-8 -right-4 -bottom-4 sm:-right-8 sm:-bottom-8 cursor-pointer sm:w-16 sm:h-16 bg-slate-700 rounded-full flex items-center justify-center">
+                    <i className="fa fa-plus text-white text-2xl "></i>
                 </div>
             </div>
 

@@ -112,7 +112,10 @@ export const itemsStore = async (data:any) => {
     })
 }
 
-export const itemsIndex = async (date:number, month:number, year:number) => {
+export const itemsIndex = async (date:any, month:any, year:any) => {
+    month = parseInt(month +1);
+    if (month < 10) month = '0' + month;
+    if (date < 10) date = '0' + date;
     const config = {
         headers:{
             "Authorization": "Bearer " + token(),
@@ -179,7 +182,9 @@ export const itemsComplete = async (id:number) => {
 }
 
 
-export const itemsTasks = async (month:number, year:number) => {
+export const itemsTasks = async (month:any, year:number) => {
+    month = parseInt(month +1);
+    if (month < 10) month = '0' + month;
 
     const config = {
         headers:{

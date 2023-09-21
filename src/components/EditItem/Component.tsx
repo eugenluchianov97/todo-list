@@ -13,6 +13,36 @@ interface ShowItemProps {
 export default (props:ShowItemProps) => {
     const {modal, _setModal} = useContext<any>(ModalContext);
 
+    const getNow = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm:any = today.getMonth() + 1; // Months start at 0!
+        let dd:any = today.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        return yyyy + '-' + mm + '-' + dd ;
+    }
+    const getTime = () => {
+        const today = new Date();
+
+        let hh:any = today.getHours(); // Months start at 0!
+        let mm:any = today.getMinutes();
+
+        if (mm < 10) mm = '0' + mm;
+        if (hh < 10) hh = '0' + hh;
+
+        return hh + ':' + mm;
+    }
+
+    const [date , setDate] = useState<any>(props.item.date);
+    const [time , setTime] = useState<any>(props.item.time);
+    const [timeEr , setTimeEr] = useState<any>([]);
+    const [dateEr , setDateEr] = useState<any>([]);
+
+
+
     const month:any = _month;
 
     const [subject, setSubject] = useState(props.item.subject)
@@ -28,10 +58,8 @@ export default (props:ShowItemProps) => {
         let data = {
             subject:subject,
             text:text,
-            date:props.day.date,
-            month:props.day.month,
-            year:props.day.year,
-            timestamp:new Date(props.day.year,props.day.month,props.day.date).getTime(),
+            date:date,
+            time:time,
             done:false
         }
 
@@ -60,6 +88,12 @@ export default (props:ShowItemProps) => {
                 if(er[0] === 'subject') {
                     setSubjectEr(er[1])
                 }
+                if(er[0] === 'date') {
+                    setDateEr(er[1])
+                }
+                if(er[0] === 'time') {
+                    setTimeEr(er[1])
+                }
             })
 
             setLoading(false);
@@ -68,7 +102,7 @@ export default (props:ShowItemProps) => {
     }
     return (
         <>
-            <div className="w-4/5 sm:w-4/6 bg-white shadow-xl relative ">
+            <div className="w-4/5 sm:w-4/6 bg-white relative shadow-xl shadow-slate-300">
                 {loading && (
                     <div className="flex bg-white opacity-50 items-center justify-center absolute top-0 left-0 bottom-0 right-0" role="status">
                         <svg aria-hidden="true"
@@ -85,10 +119,10 @@ export default (props:ShowItemProps) => {
                     </div>
                 )}
 
-                <div className="bg-teal-300 flex justify-between p-2">
+                <div className="bg-slate-700 flex justify-between p-2">
                     <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
                     <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-close text-teal-300 text-2xl "></i>
+                        <i className="fa fa-close text-slate-700 text-2xl "></i>
                     </div>
                 </div>
                 <div className="text-xs text-slate-600 p-2">
@@ -103,8 +137,28 @@ export default (props:ShowItemProps) => {
                     <textarea placeholder="Описание..." rows={10} className="w-full p-2 border border-slate-300 outline-none" defaultValue={text} onChange={(e) => {setText(e.target.value)}}></textarea>
                 </div>
 
+                <div className="text-xs text-slate-600 p-2">
+                    <p className="font-semibold mb-1">Дата и Время</p>
+                    <div className="flex">
+                        <div className="flex flex-col w-1/2">
+                            <input type="date" value={date} onChange={(e:any) => {setDate(e.target.value);setDateEr([])}} className={"w-full p-2 border  outline-none mr-1 " + (dateEr.length > 0 ? "border-red-300" : "border-slate-300")}/>
+                            {setDateEr.length > 0 && (
+                                <p className="mt-1 text-red-300">{dateEr}</p>
+                            )}
+                        </div>
+                        <div className="flex flex-col w-1/2">
+                            <input type="time" value={time} onChange={(e:any) => {setTime(e.target.value);setTimeEr([])}} className={"w-full p-2 border  outline-none ml-1 " + (timeEr.length > 0 ? "border-red-300" : "border-slate-300")}/>
+                            {setTimeEr.length > 0 && (
+                                <p className="mt-1 text-red-300">{timeEr}</p>
+                            )}
+                        </div>
+                    </div>
+
+
+                </div>
+
                 <div className="text-xs p-2">
-                    <button onClick={update} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Сохранить</button>
+                    <button onClick={update} className="my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Сохранить</button>
                 </div>
             </div>
         </>

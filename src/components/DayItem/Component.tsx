@@ -108,7 +108,7 @@ export default  (props:DayItemProps) => {
     }
 
     const addItem = () => {
-        _setModal(<AddItem day={props.day} />)
+        _setModal(<AddItem />)
     }
 
     const editItem = (item:any) => {
@@ -126,7 +126,7 @@ export default  (props:DayItemProps) => {
 
     return (
         <>
-            <div className="w-4/5 sm:w-4/6 bg-white shadow-xl relative">
+            <div className="w-4/5 sm:w-4/6 bg-white relative shadow-xl shadow-slate-300">
                 {loading && (
                     <div className="flex bg-white opacity-50 items-center justify-center absolute top-0 left-0 bottom-0 right-0" role="status">
                         <svg aria-hidden="true"
@@ -143,10 +143,10 @@ export default  (props:DayItemProps) => {
                     </div>
                 )}
 
-                <div className="bg-teal-300 flex justify-between p-2">
-                    <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
+                <div className="bg-slate-700 flex justify-between p-2">
+                    <div className="text-white text-lg ">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
                     <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-close text-teal-300 text-2xl "></i>
+                        <i className="fa fa-close text-slate-700 text-2xl "></i>
                     </div>
                 </div>
 
@@ -195,10 +195,6 @@ export default  (props:DayItemProps) => {
 
                 </div>
 
-
-                <div onClick={addItem } className="cursor-pointer w-8 h-8 bg-teal-300 rounded-full -mb-4 mx-auto flex items-center justify-center">
-                    <i className="fa fa-plus text-white text-2xl "></i>
-                </div>
             </div>
 
         </>
