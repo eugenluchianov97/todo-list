@@ -63,7 +63,7 @@ export default () => {
     const openLogin = () => {
         _setModal(<Login/>)
     }
-    const codeClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
+    const codeClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
 
     return (
 
@@ -86,17 +86,18 @@ export default () => {
                 )}
 
                 <div className="p-3">
-                    <p className="font-semibold mb-1">Подтверждение кода</p>
+                    <p className="font-semibold mb-1" text-xs>Подтверждение кода</p>
                     <input value={code} onChange={(e) => {setCode(e.target.value);}} className={codeClass} type="email" placeholder="Code"/>
                     {codeEr.length > 0 && (
-                        <p className="text-red-300">{codeEr[0]}</p>
+                        <p className="text-xs text-red-300">{codeEr[0]}</p>
+
                     )}
 
-                    <button onClick={confirmRegister} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Войти</button>
+                    <button onClick={confirmRegister} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Войти</button>
                 </div>
                 <div className="p-3 flex justify-between">
-                    <p onClick={openLogin} className="cursor-pointer hover:text-teal-300">Войти</p>
-                    <p className="cursor-pointer hover:text-teal-300">Забыли пароль?</p>
+                    <p onClick={openLogin} className="text-xs cursor-pointer">Войти</p>
+                    {/*<p className="text-xs cursor-pointer ">Забыли пароль?</p>*/}
                 </div>
 
             </div>

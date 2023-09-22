@@ -16,12 +16,11 @@ export default (props:ShowItemProps) => {
     }
     return (
         <>
-            <div className="w-4/5 sm:w-4/6 bg-white shadow-xl relative">
+            <div className="w-4/5 sm:w-4/6 bg-white relative shadow-xl shadow-slate-300">
 
-                <div className="bg-teal-300 flex justify-between p-2">
-                    <div className="text-white text-lg  font-semibold">{props.day.date} {month[props.day.month]}  {props.day.year}</div>
+                <div className="bg-slate-700 flex justify-end p-2">
                     <div onClick={back} className="cursor-pointer w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <i className="fa fa-close text-teal-300 text-2xl "></i>
+                        <i className="fa fa-close text-slate-700 text-2xl "></i>
                     </div>
                 </div>
                 <div className="text-xs text-slate-600 p-2">
@@ -31,6 +30,21 @@ export default (props:ShowItemProps) => {
                 <div className="text-xs text-slate-600 p-2">
                     <p className="font-semibold mb-1">Описание задачи</p>
                     <textarea placeholder="Описание..." readOnly rows={10} className="w-full p-2 border border-slate-300 outline-none">{props.item.text}</textarea>
+                </div>
+                <div className="text-xs text-slate-600 p-2">
+                    <p className="font-semibold mb-1">Дата и Время</p>
+                    <div className="flex">
+                        <div className="flex flex-col w-1/2">
+                            <input type="date" value={props.item.date}  className={"w-full p-2 border  outline-none mr-1 border-slate-300"}/>
+
+                        </div>
+                        <div className="flex flex-col w-1/2">
+                            <input type="time" value={props.item.time} className={"w-full p-2 border  outline-none ml-1 "}/>
+
+                        </div>
+                    </div>
+
+
                 </div>
 
             </div>

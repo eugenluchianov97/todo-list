@@ -62,9 +62,9 @@ export default (props:RegisterProps) => {
     const openLogin = () => {
         _setModal(<Login/>)
     }
-    const emailClass = "my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
-    const passwordClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")
-    const nameClass = "my-1 outline-none border  rounded-sm p-2 w-full " + (nameEr.length > 0 ? "border-red-300" : "border-slate-300")
+    const emailClass = "text-xs my-1 outline-none border rounded-sm p-2 w-full " + (emailEr.length > 0 ? "border-red-300" : "border-slate-300 ")
+    const passwordClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0 ? "border-red-300" : "border-slate-300")
+    const nameClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (nameEr.length > 0 ? "border-red-300" : "border-slate-300")
 
     return (
         <div className="w-4/5 sm:w-1/2  lg:w-1/4 bg-white p-1 sm:p-4 shadow-xl relative">
@@ -85,30 +85,30 @@ export default (props:RegisterProps) => {
             )}
 
             <div className="p-3">
-                <p className="font-semibold mb-1">Имя</p>
+                <p className="font-semibold mb-1 text-xs">Имя</p>
                 <input value={name} onChange={(e) => {setName(e.target.value);setNameEr([]);setCredentialsEr([])}} className={nameClass} type="text" placeholder="Имя"/>
                 {nameEr.length > 0 && (
-                    <p className="text-red-300">{nameEr[0]}</p>
+                    <p className="text-xs text-red-300">{nameEr[0]}</p>
                 )}
-                <p className="font-semibold mb-1">Почта</p>
+                <p className="font-semibold mb-1 text-xs">Почта</p>
                 <input value={email} onChange={(e) => {setEmail(e.target.value);setEmailEr([]);setCredentialsEr([])}} className={emailClass} type="email" placeholder="Email"/>
                 {emailEr.length > 0 && (
-                    <p className="text-red-300">{emailEr[0]}</p>
+                    <p className="text-xs text-red-300">{emailEr[0]}</p>
                 )}
-                <p className="font-semibold mb-1">Пароль</p>
+                <p className="font-semibold mb-1 text-xs">Пароль</p>
                 <input value={password} onChange={(e) => {setPassword(e.target.value);setPasswordEr([]);setCredentialsEr([])}} className={passwordClass} type="password" placeholder="Пароль"/>
                 {passwordEr.length > 0 && (
-                    <p className="text-red-300">{passwordEr[0]}</p>
+                    <p className="text-xs text-red-300">{passwordEr[0]}</p>
                 )}
 
                 {credentialsEr.length > 0 && (
-                    <p className="text-red-300">{credentialsEr[0]}</p>
+                    <p className="text-xs text-red-300">{credentialsEr[0]}</p>
                 )}
-                <button onClick={Register} className="my-1 outline-none border bg-teal-300 text-white rounded-sm p-2 w-full">Регистрация</button>
+                <button onClick={Register} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Регистрация</button>
             </div>
             <div className="p-3 flex justify-between">
-                <p onClick={openLogin} className="cursor-pointer hover:text-teal-300">Уже имеете аккаунт?</p>
-                <p className="cursor-pointer hover:text-teal-300">Забыли пароль?</p>
+                <p onClick={openLogin} className="text-xs cursor-pointer ">Уже имеете аккаунт?</p>
+                <p className="cursor-pointer text-xs">Забыли пароль?</p>
             </div>
 
         </div>

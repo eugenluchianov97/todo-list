@@ -94,7 +94,8 @@ export default  (props:DayItemProps) => {
                 }
             });
             let res = await itemsIndex(props.day.date, props.day.month, props.day.year);
-            let result2 = await itemsTasks(props.day.month,props.day.year);
+            let result2 = await itemsTasks(new Date().getMonth(),new Date().getFullYear());
+
 
 
             if(result2.status === 200){
@@ -105,10 +106,6 @@ export default  (props:DayItemProps) => {
                 setLoading(false)
             }
         }
-    }
-
-    const addItem = () => {
-        _setModal(<AddItem />)
     }
 
     const editItem = (item:any) => {
@@ -159,7 +156,7 @@ export default  (props:DayItemProps) => {
                     )}
 
                     {!loading && items.length > 0 && items.map((item:any, idx:number) => {
-                        let className = "border border-slate-300 p-1 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-green-200':'');
+                        let className = "border border-slate-300 p-1 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-slate-300':'');
                         return (
                             <div key={idx} className={className} >
                                <div className="flex items-center w-full">

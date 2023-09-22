@@ -77,6 +77,14 @@ export default () => {
             });
             setLoading(false);
 
+            let result2 = await itemsTasks(new Date().getMonth(),new Date().getFullYear());
+
+
+
+            if(result2.status === 200){
+                _setTasks(result2.data.items);
+            }
+
             _setModal(false)
         }
 
@@ -94,8 +102,6 @@ export default () => {
             })
             setLoading(false);
         }
-
-
     }
 
 
