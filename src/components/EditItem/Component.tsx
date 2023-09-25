@@ -3,8 +3,9 @@ import React, {useContext, useState} from "react";
 import ModalContext from "../../contexts/ModalContext";
 import DayItem from "../DayItem/Component";
 import _month from "../../dictionares/month";
-import {itemsIndex, itemsUpdate} from "../../api";
+import {itemsIndex, itemsTasks, itemsUpdate} from "../../api";
 import {Store} from "react-notifications-component";
+import TasksContext from "../../contexts/TasksContext";
 
 interface ShowItemProps {
     item:any,
@@ -13,6 +14,7 @@ interface ShowItemProps {
 export default (props:ShowItemProps) => {
     const {modal, _setModal} = useContext<any>(ModalContext);
 
+    const {tasks, _setTasks} = useContext<any>(TasksContext);
     const getNow = () => {
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -24,6 +26,7 @@ export default (props:ShowItemProps) => {
 
         return yyyy + '-' + mm + '-' + dd ;
     }
+
     const getTime = () => {
         const today = new Date();
 
@@ -79,8 +82,19 @@ export default (props:ShowItemProps) => {
                     onScreen: true
                 }
             });
-             setLoading(false);
+
+
+            let result2 = await itemsTasks(new Date().getMonth(),new Date().getFullYear());
+
+
+
+            if(result2.status === 200){
+                _setTasks(result2.data.items);
+            }
+
             _setModal(<DayItem day={props.day} />)
+
+            setLoading(false);
         }
 
         if(result.response && result.response.status === 422){

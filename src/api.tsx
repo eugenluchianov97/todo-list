@@ -215,3 +215,54 @@ export const confirmCode = async (data:any) => {
         return res;
     }).catch(err => {return err})
 }
+
+
+
+export const accountDelete = async () => {
+    const config = {
+        headers:{
+            "Authorization": "Bearer " + token(),
+            "Accept":"application/json",
+
+        },
+        withCredentials: true
+    }
+
+    return await axios.delete(host+'/api/account/', config).then((res:any) => {
+        return res;
+    }).catch(err => {
+        return err
+    })
+}
+
+export const passwordReset = async (data:any) => {
+    const config = {
+        headers:{
+            "Authorization": "Bearer " + token(),
+            "Accept":"application/json",
+
+        },
+        withCredentials: true
+    }
+
+    return await  axios.post(host+'/api/password/reset',data, config).then((res:any) => {
+        return res;
+    }).catch(err => {return err})
+}
+
+export const passwordChange = async (data:any) => {
+    const config = {
+        headers:{
+            "Authorization": "Bearer " + token(),
+            "Accept":"application/json",
+
+        },
+        withCredentials: true
+    }
+
+    return await  axios.post(host+'/api/password/new',data, config).then((res:any) => {
+        return res;
+    }).catch(err => {return err})
+}
+
+

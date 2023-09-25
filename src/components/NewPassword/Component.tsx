@@ -1,15 +1,17 @@
 import React, {useContext, useState} from "react";
 
 
-import Register from "./../Register/Component"
+import Login from "./../Login/Component"
 import ResetPassword from "./../ResetPassword/Component"
 
 
-import {login} from "../../api"
+import {passwordChange} from "../../api"
 
 import UserContext from "../../contexts/UserContext";
 import ModalContext from "../../contexts/ModalContext";
 import {Store} from "react-notifications-component";
+import {Simulate} from "react-dom/test-utils";
+import change = Simulate.change;
 
 
 export default () => {
@@ -17,32 +19,27 @@ export default () => {
     const {user, _setUser} = useContext<any>(UserContext);
     const {modal, _setModal} = useContext<any>(ModalContext);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailEr, setEmailEr] = useState([]);
-    const [passwordEr, setPasswordEr] = useState([]);
-    const [credentialsEr, setCredentialsEr] = useState([]);
+    const [code, setCode] = useState<any>('');
+    const [password, setPassword] = useState<any>('');
+    const [codeEr, setCodeEr] = useState<any>([]);
+    const [passwordEr, setPasswordEr] = useState<any>([]);
+
     const [loading, setLoading] = useState(false);
 
 
 
-    const Login = async () => {
+    const changePassword = async () => {
         setLoading(true)
 
         const data = {
-             email:email,
-             password:password
+            code:code,
+            password:password,
         }
-        let result = await login(data)
-
+         let result = await passwordChange(data)
 
         if(result.status === 200){
-
-            localStorage.setItem('token',result.data.token);
-            _setUser(result.data.user)
-            _setModal(false)
             Store.addNotification({
-                title: "Успешный вход!",
+                title: "Пароль успешно обнавлен!",
                 message: "",
                 type: "success",
                 insert: "top",
@@ -54,11 +51,24 @@ export default () => {
                     onScreen: true
                 }
             });
+
+            _setModal(<Login/>)
         }
 
-        if(result.response && result.response.status === 403){
+        if(result.response && result.response.status === 422){
+            Object.entries(result.response.data.errors).map((er :any) => {
+                if(er[0] === 'code') {
+                    setCodeEr(er[1])
+                }
+                if(er[0] === 'password') {
+                    setPasswordEr(er[1])
+                }
+            })
+        }
+
+        if(result.response && result.response.status === 405){
             Store.addNotification({
-                title: "Почта не подтвержденна!",
+                title: "Код подтвреждения просрочен, получите новый!",
                 message: "",
                 type: "danger",
                 insert: "top",
@@ -70,44 +80,16 @@ export default () => {
                     onScreen: true
                 }
             });
-        }
-        if(result.response && result.response.status === 422){
-            Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'email') {
-                    setEmailEr(er[1])
-                }
-
-                if(er[0] === 'password') {
-                    setPasswordEr(er[1])
-                }
-            })
-
-        }
-
-        if(result.response && result.response.status === 401){
-            Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'credentials') {
-                    setCredentialsEr(er[1])
-                }
-
-
-            })
-
+            _setModal(<ResetPassword/>)
         }
 
         setLoading(false)
 
     }
 
-    const openRegister = () => {
-        _setModal(<Register/>)
-    }
+    const codeClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
+    const passwordClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (passwordEr.length > 0  ? "border-red-300" : "border-slate-300")
 
-    const resetPassword = () => {
-        _setModal(<ResetPassword/>)
-    }
-    const emailClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0 || credentialsEr.length > 0  ? "border-red-300" : "border-slate-300")
-    const passwordClass = "text-xs my-1 outline-none border rounded-sm p-2 w-full " + (passwordEr.length > 0 || credentialsEr.length > 0? "border-red-300" : "border-slate-300")
     return (
 
         <>
@@ -129,25 +111,19 @@ export default () => {
                 )}
 
                 <div className="p-3">
-                    <p className="font-semibold mb-1 text-xs">Почта</p>
-                    <input value={email} onChange={(e) => {setEmail(e.target.value);setEmailEr([]);setCredentialsEr([])}} className={emailClass} type="email" placeholder="Email"/>
-                    {emailEr.length > 0 && (
-                        <p className="text-red-300">{emailEr[0]}</p>
+                    <p className="font-semibold mb-1 text-xs" >Новый пароль</p>
+                    <input value={code} onChange={(e) => {setCode(e.target.value); setCodeEr([])}} className={codeClass} type="email" placeholder="Код подтвтерждения"/>
+                    {codeEr.length > 0 && (
+                        <p className="text-xs text-red-300">{codeEr[0]}</p>
+
                     )}
-                    <p className="font-semibold mb-1 text-xs">Пароль</p>
-                    <input value={password} onChange={(e) => {setPassword(e.target.value);setPasswordEr([]);setCredentialsEr([])}} className={passwordClass} type="password" placeholder="Пароль"/>
+                    <input value={password} onChange={(e) => {setPassword(e.target.value);setPasswordEr([])}} className={passwordClass} type="password" placeholder="Пароль"/>
                     {passwordEr.length > 0 && (
-                        <p className="text-red-300">{passwordEr[0]}</p>
+                        <p className="text-xs text-red-300">{passwordEr[0]}</p>
+
                     )}
 
-                    {credentialsEr.length > 0 && (
-                        <p className="text-red-300">{credentialsEr[0]}</p>
-                    )}
-                    <button onClick={Login} className="my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full text-xs">Войти</button>
-                </div>
-                <div className="p-3 flex justify-between">
-                    <p onClick={openRegister} className="cursor-pointer text-xs">Регистрация</p>
-                    <p onClick={resetPassword} className="cursor-pointer  text-xs">Забыли пароль?</p>
+                    <button onClick={changePassword} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Обновить пароль</button>
                 </div>
 
             </div>

@@ -5,6 +5,7 @@ import './App.css';
 import Calendar from "./components/Calendar/Component"
 import Modal from "./components/Modal/Component"
 import Login from "./components/Login/Component"
+import Exit from "./components/Exit/Component"
 
 
 import UserContext from "./contexts/UserContext";
@@ -17,6 +18,8 @@ import useAsyncEffect from "use-async-effect";
 
 import { ReactNotifications } from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
+
+
 
 function App() {
 
@@ -52,6 +55,7 @@ function App() {
     const [tasks, setTasks] = useState<any>([])
 
 
+
     const _setUser = (userObj:any) => {
         setUser(userObj)
     }
@@ -73,6 +77,10 @@ function App() {
         }
     }
 
+    const exit = () => {
+        _setModal(<Exit/>);
+    }
+
 
     return (
         <ModalContext.Provider value={{modal,_setModal}}>
@@ -83,9 +91,13 @@ function App() {
 
                         {user && (
                             <div className="absolute top-0 left-0 right-0 bg-slate-700 p-3 text-white width-full flex justify-between">
-                                <p>{user.name}</p>
+                                <p className="cursor-pointer relative" onClick={exit}>
+                                    {user.name}
+                                </p>
 
-                                <p onClick={Logout} className="cursor-pointer select-none">Выйти</p>
+                                <p onClick={Logout} className="cursor-pointer select-none ">
+                                    Выйти
+                                </p>
 
                             </div>
                         )}

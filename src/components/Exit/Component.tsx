@@ -1,10 +1,10 @@
 import React, {useContext, useState} from "react";
 
 
-import Login from "./../Login/Component"
+import Register from "./../Register/Component"
 
 
-import {confirmCode} from "../../api"
+import {accountDelete} from "../../api"
 
 import UserContext from "../../contexts/UserContext";
 import ModalContext from "../../contexts/ModalContext";
@@ -16,24 +16,22 @@ export default () => {
     const {user, _setUser} = useContext<any>(UserContext);
     const {modal, _setModal} = useContext<any>(ModalContext);
 
-    const [code, setCode] = useState<any>('');
-    const [codeEr, setCodeEr] = useState<any>('');
-
     const [loading, setLoading] = useState(false);
 
 
 
-    const confirmRegister = async () => {
+    const deleteAccount = async () => {
         setLoading(true)
 
-        const data = {
-            code:code,
-        }
-        let result = await confirmCode(data)
+        let result  = await accountDelete()
 
         if(result.status === 200){
+
+            localStorage.removeItem('token');
+            _setUser(false)
+            _setModal(<Register/>)
             Store.addNotification({
-                title: "Успешное подтверждение!",
+                title: "Аккаунт успешно удален!",
                 message: "",
                 type: "success",
                 insert: "top",
@@ -45,25 +43,15 @@ export default () => {
                     onScreen: true
                 }
             });
-            _setModal(false)
-        }
-
-        if(result.response && result.response.status === 422){
-            Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'code') {
-                    setCodeEr(er[1])
-                }
-            })
         }
 
         setLoading(false)
 
     }
 
-    const openLogin = () => {
-        _setModal(<Login/>)
+    const home = () => {
+        _setModal(false)
     }
-    const codeClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
 
     return (
 
@@ -85,17 +73,13 @@ export default () => {
                     </div>
                 )}
 
-                <div className="p-3">
-                    <p className="font-semibold mb-1 text-xs" >Подтверждение кода</p>
-                    <input value={code} onChange={(e) => {setCode(e.target.value);}} className={codeClass} type="email" placeholder="Code"/>
-                    {codeEr.length > 0 && (
-                        <p className="text-xs text-red-300">{codeEr[0]}</p>
+                <div className="p-1">
 
-                    )}
-
-                    <button onClick={confirmRegister} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Подтвердить</button>
+                    <button onClick={deleteAccount} className="my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full text-xs">Удалить аккаунт</button>
                 </div>
-
+                <div className="p-1">
+                    <button onClick={home} className="my-1 outline-none border border-slate-700 text-slate-700 rounded-sm p-2 w-full text-xs">На главную</button>
+                </div>
             </div>
 
         </>

@@ -6,6 +6,7 @@ import ModalContext from "../../contexts/ModalContext";
 import UserContext from "../../contexts/UserContext";
 
 import ConfirmRegister from "./../ConfirmRegister/Component"
+import ResetPassword from "../ResetPassword/Component";
 
 interface RegisterProps {
     // openModal:(element: JSX.Element) => void,
@@ -59,6 +60,10 @@ export default (props:RegisterProps) => {
 
     }
 
+    const resetPassword = () => {
+        _setModal(<ResetPassword/>)
+    }
+
     const openLogin = () => {
         _setModal(<Login/>)
     }
@@ -108,7 +113,7 @@ export default (props:RegisterProps) => {
             </div>
             <div className="p-3 flex justify-between">
                 <p onClick={openLogin} className="text-xs cursor-pointer ">Уже имеете аккаунт?</p>
-                <p className="cursor-pointer text-xs">Забыли пароль?</p>
+                <p onClick={resetPassword} className="cursor-pointer text-xs">Забыли пароль?</p>
             </div>
 
         </div>

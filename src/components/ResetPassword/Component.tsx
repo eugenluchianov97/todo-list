@@ -1,10 +1,10 @@
 import React, {useContext, useState} from "react";
 
 
-import Login from "./../Login/Component"
+import NewPassword from "./../NewPassword/Component"
 
 
-import {confirmCode} from "../../api"
+import {passwordReset} from "../../api"
 
 import UserContext from "../../contexts/UserContext";
 import ModalContext from "../../contexts/ModalContext";
@@ -16,24 +16,24 @@ export default () => {
     const {user, _setUser} = useContext<any>(UserContext);
     const {modal, _setModal} = useContext<any>(ModalContext);
 
-    const [code, setCode] = useState<any>('');
-    const [codeEr, setCodeEr] = useState<any>('');
+    const [email, setEmail] = useState<any>('');
+    const [emailEr, setEmailEr] = useState<any>([]);
 
     const [loading, setLoading] = useState(false);
 
 
 
-    const confirmRegister = async () => {
+    const resetPassword = async () => {
         setLoading(true)
 
         const data = {
-            code:code,
+            email:email,
         }
-        let result = await confirmCode(data)
+         let result = await passwordReset(data)
 
         if(result.status === 200){
             Store.addNotification({
-                title: "Успешное подтверждение!",
+                title: "Код был выслан на указанную почту!",
                 message: "",
                 type: "success",
                 insert: "top",
@@ -45,13 +45,13 @@ export default () => {
                     onScreen: true
                 }
             });
-            _setModal(false)
+            _setModal(<NewPassword/>)
         }
 
         if(result.response && result.response.status === 422){
             Object.entries(result.response.data.errors).map((er :any) => {
-                if(er[0] === 'code') {
-                    setCodeEr(er[1])
+                if(er[0] === 'email') {
+                    setEmailEr(er[1])
                 }
             })
         }
@@ -60,10 +60,7 @@ export default () => {
 
     }
 
-    const openLogin = () => {
-        _setModal(<Login/>)
-    }
-    const codeClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (codeEr.length > 0  ? "border-red-300" : "border-slate-300")
+    const emailClass = "text-xs my-1 outline-none border  rounded-sm p-2 w-full " + (emailEr.length > 0  ? "border-red-300" : "border-slate-300")
 
     return (
 
@@ -86,14 +83,14 @@ export default () => {
                 )}
 
                 <div className="p-3">
-                    <p className="font-semibold mb-1 text-xs" >Подтверждение кода</p>
-                    <input value={code} onChange={(e) => {setCode(e.target.value);}} className={codeClass} type="email" placeholder="Code"/>
-                    {codeEr.length > 0 && (
-                        <p className="text-xs text-red-300">{codeEr[0]}</p>
+                    <p className="font-semibold mb-1 text-xs" >Восстановить пароль</p>
+                    <input value={email} onChange={(e) => {setEmail(e.target.value);}} className={emailClass} type="email" placeholder="Email"/>
+                    {emailEr.length > 0 && (
+                        <p className="text-xs text-red-300">{emailEr[0]}</p>
 
                     )}
 
-                    <button onClick={confirmRegister} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Подтвердить</button>
+                    <button onClick={resetPassword} className="text-xs my-1 outline-none border bg-slate-700 text-white rounded-sm p-2 w-full">Выслать код</button>
                 </div>
 
             </div>
