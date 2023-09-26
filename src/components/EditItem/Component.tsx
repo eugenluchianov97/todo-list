@@ -1,6 +1,9 @@
 import AddItem from "../AddItem/Component";
 import React, {useContext, useState} from "react";
+
 import ModalContext from "../../contexts/ModalContext";
+import MonthContext from "../../contexts/MonthContext";
+
 import DayItem from "../DayItem/Component";
 import _month from "../../dictionares/month";
 import {itemsIndex, itemsTasks, itemsUpdate} from "../../api";
@@ -13,6 +16,8 @@ interface ShowItemProps {
 }
 export default (props:ShowItemProps) => {
     const {modal, _setModal} = useContext<any>(ModalContext);
+
+    const {currentMonth, _setMonth} = useContext<any>(MonthContext);
 
     const {tasks, _setTasks} = useContext<any>(TasksContext);
     const getNow = () => {
@@ -84,7 +89,7 @@ export default (props:ShowItemProps) => {
             });
 
 
-            let result2 = await itemsTasks(new Date().getMonth(),new Date().getFullYear());
+            let result2 = await itemsTasks(currentMonth,new Date().getFullYear());
 
 
 

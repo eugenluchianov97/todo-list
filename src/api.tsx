@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const host = 'http://localhost:8000';
+//const host = 'https://todos-api.eugenluchianov97.com/';
+const host:string = 'http://localhost:8000';
 
 const token = () => {
     return localStorage.getItem("token")

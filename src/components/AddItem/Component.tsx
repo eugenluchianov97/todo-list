@@ -4,11 +4,15 @@ import DayItem from "../DayItem/Component";
 import _month from "../../dictionares/month";
 import {itemsIndex, itemsStore, itemsTasks} from "../../api";
 import TasksContext from "../../contexts/TasksContext";
+import MonthContext from "../../contexts/MonthContext";
 import {Store} from "react-notifications-component";
+
 
 export default () => {
     const {modal, _setModal} = useContext<any>(ModalContext);
     const {tasks, _setTasks} = useContext<any>(TasksContext);
+    const {currentMonth, _setMonth} = useContext<any>(MonthContext);
+
 
 
     const getNow = () => {
@@ -77,7 +81,9 @@ export default () => {
             });
             setLoading(false);
 
-            let result2 = await itemsTasks(new Date().getMonth(),new Date().getFullYear());
+
+
+            let result2 = await itemsTasks(currentMonth, new Date().getFullYear());
 
 
 

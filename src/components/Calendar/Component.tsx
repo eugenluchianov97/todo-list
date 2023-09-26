@@ -15,6 +15,7 @@ import UserContext from "../../contexts/UserContext";
 import TasksContext from "../../contexts/TasksContext";
 
 import AddItem from "./../AddItem/Component"
+import MonthContext from "../../contexts/MonthContext";
 export default () => {
 
     const weekDays :any = _weekDays;
@@ -25,9 +26,12 @@ export default () => {
     const {modal, _setModal} = useContext<any>(ModalContext);
     const {tasks, _setTasks} = useContext<any>(TasksContext);
 
+    const {currentMonth, _setMonth} = useContext<any>(MonthContext);
+
 
     const today:Date = new Date();
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth())
+
+    //const [currentMonth, setCurrentMonth] = useState(today.getMonth())
     const [currentYear, setCurrentYear] = useState(today.getFullYear())
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -134,11 +138,11 @@ export default () => {
     const nextMonth = async () => {
         setLoading(true)
         if(currentMonth + 1 > 11){
-            setCurrentMonth(0);
+            _setMonth(0);
             setCurrentYear(currentYear+1)
         }
         else{
-            setCurrentMonth(currentMonth + 1)
+            _setMonth(currentMonth + 1)
         }
 
     }
@@ -148,11 +152,11 @@ export default () => {
     const prevMonth = async () => {
         setLoading(true)
         if(currentMonth - 1 < 0){
-            setCurrentMonth(11);
+            _setMonth(11);
             setCurrentYear(currentYear-1)
         }
         else{
-            setCurrentMonth(currentMonth - 1)
+            _setMonth(currentMonth - 1)
         }
 
     }
@@ -163,7 +167,7 @@ export default () => {
     }
 
     const addItem = () => {
-        _setModal(<AddItem />)
+        _setModal(<AddItem/>)
     }
 
     return (

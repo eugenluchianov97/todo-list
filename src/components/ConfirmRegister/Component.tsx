@@ -86,7 +86,7 @@ export default () => {
                 )}
 
                 <div className="p-3">
-                    <p className="font-semibold mb-1 text-xs" >Подтверждение кода</p>
+                    <p className="font-semibold mb-1 text-xs" >Подтверждение регистрации</p>
                     <input value={code} onChange={(e) => {setCode(e.target.value);}} className={codeClass} type="email" placeholder="Code"/>
                     {codeEr.length > 0 && (
                         <p className="text-xs text-red-300">{codeEr[0]}</p>

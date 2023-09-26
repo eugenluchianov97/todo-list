@@ -7,6 +7,7 @@ import UserContext from "../../contexts/UserContext";
 
 import ConfirmRegister from "./../ConfirmRegister/Component"
 import ResetPassword from "../ResetPassword/Component";
+import {Store} from "react-notifications-component";
 
 interface RegisterProps {
     // openModal:(element: JSX.Element) => void,
@@ -39,6 +40,19 @@ export default (props:RegisterProps) => {
         if(result.status === 200){
             localStorage.setItem('token',result.data.token);
             _setUser(result.data.user)
+            Store.addNotification({
+                title: "Код для подтверждения был отправлен Вам на почту!",
+                message: "",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3000,
+                    onScreen: true
+                }
+            });
             _setModal(<ConfirmRegister/>);
         }
 

@@ -148,7 +148,7 @@ export default  (props:DayItemProps) => {
                 </div>
 
 
-                <div className=" my-2 sm:my-2 h-full overflow-y-auto sm:h-96 mx-1 sm:mx-4" >
+                <div className=" my-2 sm:my-2 h-full overflow-y-auto sm:h-96 mx-1 sm:mx-4" style={{height:'300px'}}>
                     {loading && (
                         <div className=" text-slate-300 p-1 my-1 text-sm select-none flex items-center justify-center" >
                             <p>Loading...</p>
@@ -156,7 +156,7 @@ export default  (props:DayItemProps) => {
                     )}
 
                     {!loading && items.length > 0 && items.map((item:any, idx:number) => {
-                        let className = "border border-slate-300 p-1 my-1 select-none flex items-center justify-between " + (item.done ? 'bg-slate-300':'');
+                        let className = "border border-slate-700 p-1 my-1 select-none flex flex-col sm:flex-row items-center justify-between " + (item.done ? 'bg-slate-300':'');
                         return (
                             <div key={idx} className={className} >
                                <div className="flex items-center w-full">
@@ -164,7 +164,7 @@ export default  (props:DayItemProps) => {
                                        {++idx}.{item.subject}
                                    </div>
                                </div>
-                                <div className="flex flex-col sm:flex-row items-between justify-center ">
+                                <div className="flex flex-row items-between justify-center pt-2 sm:pt-0 ">
                                     <>
                                         <div onClick={() => {deleteItem(item.id)}} className=" mx-1 cursor-pointer flex items-center justify-center w-9 h-9 bg-slate-200 rounded-full p-4">
                                             <i className="fa fa-trash text-red-500"></i>
